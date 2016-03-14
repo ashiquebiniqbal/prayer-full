@@ -81,4 +81,8 @@
     <string name="set">Set</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="north">North</string>
+    <string name="qibla">Qibla</string>
+    <string name="from">from</string>
+    <string name="degrees">50&#xb0;</string>
 </resources>

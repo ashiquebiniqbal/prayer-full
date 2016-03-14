@@ -23,6 +23,8 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
+
 public class CompassFragment extends AbstractPrayerFragment implements SensorEventListener {
 
 	private SharedPreferences sharedPrefs;
@@ -37,7 +39,8 @@ public class CompassFragment extends AbstractPrayerFragment implements SensorEve
 	// device sensor manager
 	private SensorManager mSensorManager;
 
-	TextView tvHeading;
+	TextView txtLocationName;
+	TextView txtHeading;
 	
 	private Gson gson;
 	
@@ -52,14 +55,17 @@ public class CompassFragment extends AbstractPrayerFragment implements SensorEve
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.prayertime_compass, container, false);
-		
-		
+
+		String prayerJson = sharedPrefs.getString(Prayer.class.getName(), gson.toJson(new Prayer()));
+		Prayer prayer = gson.fromJson(prayerJson, Prayer.class);
+
 		// our compass image 
-        image = (ImageView) rootView.findViewById(R.id.imageViewCompass);
-        arrow = (ImageView) rootView.findViewById(R.id.arrow);
+        image = (ImageView) rootView.findViewById(R.id.prayertime_compass_bg);
+        arrow = (ImageView) rootView.findViewById(R.id.prayertime_compass_arrow);
         
         // TextView that will tell the user what degree is he heading
-        tvHeading = (TextView) rootView.findViewById(R.id.tvHeading);
+        txtLocationName = (TextView) rootView.findViewById(R.id.prayertime_compass_locationname);
+		txtHeading = (TextView) rootView.findViewById(R.id.prayertime_compass_heading);
  
         // initialize your android device sensor capabilities
         mSensorManager = (SensorManager) getContext().getSystemService(getContext().SENSOR_SERVICE);
@@ -79,9 +85,7 @@ public class CompassFragment extends AbstractPrayerFragment implements SensorEve
 		});
 		
 		setCustomToolbar(rootView, getContext().getResources().getString(R.string.compass_title));
-		
-		String prayerJson = sharedPrefs.getString(Prayer.class.getName(), gson.toJson(new Prayer()));
-		Prayer prayer = gson.fromJson(prayerJson, Prayer.class);
+		txtLocationName.setText(new StringBuilder().append(prayer.getLocation().getCity()).append(", ").append(prayer.getLocation().getCountry()));
 		qiblaDirection = QiblaDirectionUtil.qibla(prayer.getLocation() .getLatitude(), prayer.getLocation().getLongitude());
 		return rootView;
 	}
@@ -133,7 +137,22 @@ public class CompassFragment extends AbstractPrayerFragment implements SensorEve
 		// get the angle around the z-axis rotated
 		float degree = Math.round(event.values[0]);
 
-		tvHeading.setText("Heading: " + Float.toString(degree) + " degrees, qibla: "+ qiblaDirection);
+		BigDecimal bd = new BigDecimal(Float.toString(degree));
+		bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
+
+		BigDecimal bdq = new BigDecimal(qiblaDirection);
+		bdq = bdq.setScale(2, BigDecimal.ROUND_HALF_UP);
+
+		txtHeading.setText(new StringBuilder()
+				.append(getResources().getString(R.string.north))
+				.append(" ")
+				.append(bd.floatValue())
+				.append(getResources().getString(R.string.degrees))
+				.append(", ")
+				.append(getResources().getString(R.string.qibla))
+				.append(": ")
+				.append(bdq.floatValue())
+				.append(getResources().getString(R.string.degrees)));
 
 		// create a rotation animation (reverse turn degree degrees)
 		RotateAnimation ra = new RotateAnimation(currentDegree, -degree,

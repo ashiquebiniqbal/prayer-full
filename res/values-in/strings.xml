@@ -77,4 +77,8 @@
     <string name="set">Setel</string>
     <string name="edit">Perbaharui</string>
     <string name="delete">Hapus</string>
+    <string name="north">Utara</string>
+    <string name="qibla">Qibla</string>
+    <string name="from">dari</string>
+    <string name="degrees">50&#xb0;</string>
 </resources>
