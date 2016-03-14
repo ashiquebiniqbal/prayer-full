@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:prayer="http://schemas.android.com/apk/res/net.fajarachmad.prayer"
+    android:orientation="vertical">
+
+    <include layout="@layout/common_toolbar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal">
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/evaluation_reminder_entry_cardview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <EditText
+                        android:id="@+id/evaluation_reminder_entry_txtmessage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:inputType="text"
+                        android:lines="2"
+                        android:padding="5dp"
+                        android:paddingBottom="15dp"
+                        android:hint="@string/reminder_message_hint"
+                        android:drawableLeft="@drawable/prayer_message_icon"
+                        android:drawablePadding="15dp"/>
+
+                    <EditText
+                        android:id="@+id/evaluation_reminder_entry_txttime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/evaluation_reminder_entry_txtmessage"
+                        android:clickable="true"
+                        android:editable="false"
+                        android:inputType="none"
+                        android:padding="5dp"
+                        android:paddingBottom="15dp"
+                        android:hint="@string/reminder_time_hint"
+                        android:drawableLeft="@drawable/prayer_time_icon"
+                        android:drawablePadding="15dp"/>
+
+                    <EditText
+                        android:id="@+id/evaluation_reminder_entry_txtsound"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/evaluation_reminder_entry_txttime"
+                        android:clickable="true"
+                        android:editable="false"
+                        android:inputType="none"
+                        android:padding="5dp"
+                        android:paddingBottom="15dp"
+                        android:hint="@string/reminder_tone_hint"
+                        android:drawableLeft="@drawable/prayer_tone_icon"
+                        android:drawablePadding="15dp"/>
+
+                    <TextView
+                        android:id="@+id/evaluation_reminder_entry_lblrepeat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/evaluation_reminder_entry_txtsound"
+                        android:padding="5dp"
+                        android:text="@string/repeat_title"
+                        android:textSize="10dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_below="@id/evaluation_reminder_entry_lblrepeat"
+                        android:gravity="center_horizontal">
+                        <net.fajarachmad.prayer.common.view.CheckableImageButton
+                            android:id="@+id/evaluation_reminder_entry_btn_sun"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:src="@drawable/prayer_day_icon_s_unchecked"
+                            android:padding="5dp"
+                            prayer:onCheckedSrc="@drawable/prayer_day_icon_s_checked"
+                            prayer:onUncheckedSrc="@drawable/prayer_day_icon_s_unchecked"/>
+                        <net.fajarachmad.prayer.common.view.CheckableImageButton
+                            android:id="@+id/evaluation_reminder_entry_btn_mon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:src="@drawable/prayer_day_icon_m_unchecked"
+                            android:padding="5dp"
+                            prayer:onCheckedSrc="@drawable/prayer_day_icon_m_checked"
+                            prayer:onUncheckedSrc="@drawable/prayer_day_icon_m_unchecked"/>
+                        <net.fajarachmad.prayer.common.view.CheckableImageButton
+                            android:id="@+id/evaluation_reminder_entry_btn_tue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:src="@drawable/prayer_day_icon_t_unchecked"
+                            android:padding="5dp"
+                            prayer:onCheckedSrc="@drawable/prayer_day_icon_t_checked"
+                            prayer:onUncheckedSrc="@drawable/prayer_day_icon_t_unchecked"/>
+                        <net.fajarachmad.prayer.common.view.CheckableImageButton
+                            android:id="@+id/evaluation_reminder_entry_btn_wed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:src="@drawable/prayer_day_icon_w_unchecked"
+                            android:padding="5dp"
+                            prayer:onCheckedSrc="@drawable/prayer_day_icon_w_checked"
+                            prayer:onUncheckedSrc="@drawable/prayer_day_icon_w_unchecked"/>
+                        <net.fajarachmad.prayer.common.view.CheckableImageButton
+                            android:id="@+id/evaluation_reminder_entry_btn_thu"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:src="@drawable/prayer_day_icon_t_unchecked"
+                            android:padding="5dp"
+                            prayer:onCheckedSrc="@drawable/prayer_day_icon_t_checked"
+                            prayer:onUncheckedSrc="@drawable/prayer_day_icon_t_unchecked"/>
+                        <net.fajarachmad.prayer.common.view.CheckableImageButton
+                            android:id="@+id/evaluation_reminder_entry_btn_fri"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:src="@drawable/prayer_day_icon_f_unchecked"
+                            android:padding="5dp"
+                            prayer:onCheckedSrc="@drawable/prayer_day_icon_f_checked"
+                            prayer:onUncheckedSrc="@drawable/prayer_day_icon_f_unchecked"/>
+                        <net.fajarachmad.prayer.common.view.CheckableImageButton
+                            android:id="@+id/evaluation_reminder_entry_btn_sat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:src="@drawable/prayer_day_icon_s_unchecked"
+                            android:padding="5dp"
+                            prayer:onCheckedSrc="@drawable/prayer_day_icon_s_checked"
+                            prayer:onUncheckedSrc="@drawable/prayer_day_icon_s_unchecked"/>
+                    </LinearLayout>
+
+                </RelativeLayout>
+            </android.support.v7.widget.CardView>
+
+        </RelativeLayout>
+    </ScrollView>
+
+</LinearLayout>

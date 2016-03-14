@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+ 
+    <PreferenceCategory android:title="@string/pref_general" >
+        
+        <ListPreference
+            android:key="prefLanguage"
+            android:entries="@array/language"
+            android:summary="%s"
+            android:entryValues="@array/languageValues"
+            android:title="@string/pref_language"
+            android:defaultValue="en" />
+        
+        <CheckBoxPreference 
+            android:key="prefDisabledNotification"
+            android:defaultValue="false"
+            android:summary="@string/pref_disable_notification_summary"
+            android:title="@string/pref_disable_notification">
+        </CheckBoxPreference>
+        
+    </PreferenceCategory>
+     
+    <PreferenceCategory android:title="@string/pref_time_calculation" >
+        <ListPreference
+            android:key="prefCalculationMethod"
+            android:entries="@array/calulationMethod"
+            android:summary="%s"
+            android:entryValues="@array/calulationMethodValues"
+            android:title="@string/pref_calculation_method"
+            android:defaultValue="3" />
+        
+        <ListPreference
+            android:key="prefAsrMethod"
+            android:entries="@array/asrMethod"
+            android:summary="%s"
+            android:entryValues="@array/ashMethodValues"
+            android:title="@string/pref_asr_method"
+            android:defaultValue="0" />
+        
+        <PreferenceScreen 
+        	android:title="@string/pref_manual_tunning"
+        	android:persistent="false">
+            
+      		 <net.fajarachmad.prayer.common.view.SliderPreference
+		        android:defaultValue="@string/default_manual_tume"
+		        android:dialogMessage="@string/prayer_fajr_name"
+		        android:key="tune_fajr"
+		        android:title="@string/prayer_fajr_name" />
+            	
+      		 <net.fajarachmad.prayer.common.view.SliderPreference
+		        android:defaultValue="@string/default_manual_tume"
+		        android:dialogMessage="@string/prayer_dhuhr_name"
+		        android:key="tune_dhuhr"
+		        android:title="@string/prayer_dhuhr_name" />
+      		 
+      		 <net.fajarachmad.prayer.common.view.SliderPreference
+		        android:defaultValue="@string/default_manual_tume"
+		        android:dialogMessage="@string/prayer_asr_name"
+		        android:key="tune_asr"
+		        android:title="@string/prayer_asr_name" />
+      		 
+      		 <net.fajarachmad.prayer.common.view.SliderPreference
+		        android:defaultValue="@string/default_manual_tume"
+		        android:dialogMessage="@string/prayer_maghrib_name"
+		        android:key="tune_maghrib"
+		        android:title="@string/prayer_maghrib_name" />
+      		 
+      		 <net.fajarachmad.prayer.common.view.SliderPreference
+		        android:defaultValue="@string/default_manual_tume"
+		        android:dialogMessage="@string/prayer_isha_name"
+		        android:key="tune_isha"
+		        android:title="@string/prayer_isha_name" />
+      		 
+      		 <Preference 
+      		    android:title="Reset Value"
+      		    android:key="tune_reset"/>
+      		 
+        </PreferenceScreen>
+    </PreferenceCategory>
+ 	
+    <PreferenceCategory android:title="@string/praf_location_title">
+        
+        <CheckBoxPreference 
+            android:title="@string/pref_auto_detect_location"
+            android:key="prefAutoDetectLocation"
+            android:defaultValue="true"
+            android:summary="@string/pref_auto_detect_location_summary"
+            />
+        
+    </PreferenceCategory>
+</PreferenceScreen>

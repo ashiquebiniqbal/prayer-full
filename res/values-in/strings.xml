@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Jadwal Sholat</string>
+	<string name="location_setting_title">Pengaturan Lokasi</string>
+    <string name="navigation_drawer_open">Membuka Navigasi</string>
+    <string name="navigation_drawer_close">Menutup Navigasi</string>
+	<string name="upcoming_prayer">Shalat selanjutnya</string>
+
+    <string name="action_settings">Pengaturan</string>
+	<string name="search_location">Cari lokasi</string>
+	<string name="use_current_location">Gunakan lokasi saat ini</string>
+	
+	<string name="prayer_imsak_name">Imsak</string>
+	<string name="prayer_fajr_name">Shubuh</string>
+	<string name="prayer_dhuhr_name">Dzuhur</string>
+	<string name="prayer_asr_name">Ashar</string>
+	<string name="prayer_maghrib_name">Maghrib</string>
+	<string name="prayer_isha_name">Isya</string>
+	
+	<string name="menu_settings">Pengaturan</string>
+	<string name="pref_disable_notification">Nonaktifkan notifikasi</string>
+    <string name="pref_disable_notification_summary">Matikan seluruh notifikasi</string>
+    <string name="pref_language">Bahasa</string>
+    <string name="pref_calculation_method">Metode perhitungan</string>
+    <string name="pref_asr_method">Metode perhitungan Ashar</string>
+    
+    <string name="pref_general">Umum</string>
+    <string name="pref_time_calculation">Perhitungan waktu</string>
+    <string name="pref_manual_tunning">Tuning manual</string>
+    
+    <string name="praf_location_title">Lokasi</string>
+    <string name="pref_auto_detect_location">Dekteksi otomatis</string>
+    <string name="pref_auto_detect_location_summary">Otomatis menggunakan lokasi saat ini</string>
+	
+    <string name="pref_on_prayer">Saat waktu shalat</string>
+    <string name="pref_before_prayer">Sebelum waktu shalat</string>
+    <string name="pref_alarm">Alarm</string>
+    <string name="pref_sound">Suara</string>
+    <string name="pref_notify_before">Ingatkan sebelum</string>
+    
+    <string name="default_notify_before">5</string>
+    <string name="default_alarm">azan1</string>
+    
+    <string name="pref_minutes">Menit</string>
+    <string name="pref_hours">Jam</string>
+    <string name="left_until">menuju waktu</string>
+    
+    <string name="notification_setup_title">Pengaturan Notifikasi %1$s</string>
+    
+    <!-- Notification -->
+    <string name="notif_on_prayer">Waktunya sholat</string>
+    <string name="notif_before_pray">menit menuju</string>
+    <string name="notif_title">Prayer Time</string>
+    
+    <string name="notif_dismiss">Berhentikan</string>
+    
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    
+    <string name="compass_title">Arah qiblat</string>
+    <string name="mosque_finder_title">Masjid Terdekat</string>
+    <string name="self_evaluation_title">Evaluasi Diri</string>
+
+    <string name="message_title">Pesan:</string>
+    <string name="repeat_title">Setiap:</string>
+    <string name="set_reminder_tone_title">Set nada pengingat</string>
+
+    <string name="reminder_message_hint">Pesan pengingat</string>
+    <string name="reminder_time_hint">Waktu pengingat</string>
+    <string name="reminder_tone_hint">Nada pengingat</string>
+    <string name="save_label">Simpan</string>
+    <string name="add_new_evaluation_reminder">Buat Pengingat</string>
+    <string name="progress">Kemajuan</string>
+    <string name="new_goal">Buat Cita-Cita</string>
+    <string name="save">Simpan</string>
+    <string name="cancel">Batal</string>
+    <string name="set">Setel</string>
+    <string name="edit">Perbaharui</string>
+    <string name="delete">Hapus</string>
+</resources>

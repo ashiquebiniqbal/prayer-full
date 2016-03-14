@@ -1,0 +1,25 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".evaluation.fragment.EvaluationFragment" >
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/evaluation_rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="5dp" />
+
+    <com.getbase.floatingactionbutton.FloatingActionButton
+        android:id="@+id/evaluation_btn_newentry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        fab:fab_icon="@drawable/ic_fab_star"
+        fab:fab_colorNormal="@color/green"
+        fab:fab_colorPressed="@color/green_pressed"/>
+
+</RelativeLayout>

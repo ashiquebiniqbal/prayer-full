@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/common_toolbar" />
+
+    <ScrollView
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal">
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/evaluation_entry_goalinfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/evaluation_entry_lbl_goalname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:text="Goal Name:"
+                        android:padding="5dp"/>
+
+                    <EditText
+                        android:id="@+id/evalluation_entry_txt_goalname"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/evaluation_entry_lbl_goalname"
+                        android:paddingTop="5dp"
+                        android:inputType="text"
+                        android:hint="Read Quran"/>
+
+                    <TextView
+                        android:id="@+id/evaluation_entry_lbl_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Entry Type:"
+                        android:padding="5dp"
+                        android:layout_below="@id/evalluation_entry_txt_goalname"/>
+
+                    <RadioGroup
+                        android:id="@+id/evalluation_entry_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_below="@id/evaluation_entry_lbl_type">
+
+                        <RadioButton
+                            android:id="@+id/evaluation_entry_type_yesno"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Yes/No"  />
+
+                        <RadioButton
+                            android:id="@+id/evaluation_entry_type_free"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Free Text"
+                            android:checked="true"/>
+
+                    </RadioGroup>
+                    <TextView
+                        android:id="@+id/evaluation_entry_lbl_target"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/evalluation_entry_type"
+                        android:text="Target:"
+                        android:padding="5dp"/>
+
+                    <LinearLayout
+                        android:id="@+id/evalluation_entry_target"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_below="@id/evaluation_entry_lbl_target"
+                        android:padding="5dp"
+                        android:weightSum="100">
+
+                        <EditText
+                            android:id="@+id/evalluation_entry_txt_target"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="25"
+                            android:inputType="number"
+                            android:hint="2"/>
+
+                        <EditText
+                            android:id="@+id/evalluation_entry_txt_targetunit"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="35"
+                            android:inputType="text"
+                            android:hint="Juz"/>
+
+                        <Spinner
+                            android:id="@+id/evalluation_entry_txt_frequency"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="40"
+                            android:entries="@array/evaluationFrequency"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/evaluation_entry_lbl_enddate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/evalluation_entry_target"
+                        android:text="End Date:"
+                        android:padding="5dp"/>
+
+                    <EditText
+                        android:id="@+id/evaluation_entry_enddate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/evaluation_entry_lbl_enddate"
+                        android:inputType="none"
+                        android:hint="19-01-2016"/>
+                </RelativeLayout>
+            </android.support.v7.widget.CardView>
+        </RelativeLayout>
+    </ScrollView>
+
+</LinearLayout>
