@@ -138,20 +138,20 @@ public class CompassFragment extends AbstractPrayerFragment implements SensorEve
 		float degree = Math.round(event.values[0]);
 
 		BigDecimal bd = new BigDecimal(Float.toString(degree));
-		bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
+		bd = bd.setScale(1, BigDecimal.ROUND_CEILING);
 
 		BigDecimal bdq = new BigDecimal(qiblaDirection);
-		bdq = bdq.setScale(2, BigDecimal.ROUND_HALF_UP);
+		bdq = bdq.setScale(1, BigDecimal.ROUND_CEILING);
 
 		txtHeading.setText(new StringBuilder()
 				.append(getResources().getString(R.string.north))
 				.append(" ")
-				.append(bd.floatValue())
+				.append(bd)
 				.append(getResources().getString(R.string.degrees))
 				.append(", ")
 				.append(getResources().getString(R.string.qibla))
 				.append(": ")
-				.append(bdq.floatValue())
+				.append(bdq)
 				.append(getResources().getString(R.string.degrees)));
 
 		// create a rotation animation (reverse turn degree degrees)

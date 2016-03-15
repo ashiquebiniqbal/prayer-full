@@ -3,12 +3,14 @@ package net.fajarachmad.prayer.prayertime.fragment;
 import static net.fajarachmad.prayer.common.constant.AppConstant.*;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import net.fajarachmad.prayer.activity.MainActivity;
 import net.fajarachmad.prayer.R;
@@ -125,44 +127,48 @@ public class LocationSettingFragment extends AbstractPrayerFragment {
 					public void onClick(View v) {
 						progressBar.setVisibility(View.VISIBLE);
 						GPSTracker gpsTracker = new GPSTracker(getContext());
-						if (isNetworkAvailable() && gpsTracker.getIsGPSTrackingEnabled()) {
+						if (isNetworkAvailable()) {
+							if (gpsTracker.getIsGPSTrackingEnabled()) {
 
-							double latitude = gpsTracker.getLatitude();
-							double longitude = gpsTracker.getLongitude();
-							String country = gpsTracker.getCountryName(getContext());
-							String city = gpsTracker.getLocality(getContext());
-							String postalCode = gpsTracker.getPostalCode(getContext());
-							String addressLine = gpsTracker.getAddressLine(getContext());
+								double latitude = gpsTracker.getLatitude();
+								double longitude = gpsTracker.getLongitude();
+								String country = gpsTracker.getCountryName(getContext());
+								String city = gpsTracker.getLocality(getContext());
+								String postalCode = gpsTracker.getPostalCode(getContext());
+								String addressLine = gpsTracker.getAddressLine(getContext());
 
-							Location location = new Location();
-							location.setLatitude(latitude);
-							location.setLongitude(longitude);
-							location.setCountry(country);
-							location.setCity(city);
-							location.setAddressLine(addressLine);
-							location.setPostalCode(postalCode);
+								Location location = new Location();
+								location.setLatitude(latitude);
+								location.setLongitude(longitude);
+								location.setCountry(country);
+								location.setCity(city);
+								location.setAddressLine(addressLine);
+								location.setPostalCode(postalCode);
 
-							Log.i("Prayer", "Latitude: " + latitude);
-							Log.i("Prayer", "Longitude: " + longitude);
-							Log.i("Prayer", "Country: " + country);
-							Log.i("Prayer", "City: " + city);
+								Log.i("Prayer", "Latitude: " + latitude);
+								Log.i("Prayer", "Longitude: " + longitude);
+								Log.i("Prayer", "Country: " + country);
+								Log.i("Prayer", "City: " + city);
 
-							List<Location> locations = new ArrayList<Location>();
-							locations.add(location);
+								List<Location> locations = new ArrayList<Location>();
+								locations.add(location);
 
-							adapter = new LocationAdapter(
-									getContext(),
-									R.layout.prayertime_location_item,
-									R.id.location_name, locations);
-							lv.setAdapter(adapter);
-
+								adapter = new LocationAdapter(
+										getContext(),
+										R.layout.prayertime_location_item,
+										R.id.location_name, locations);
+								lv.setAdapter(adapter);
+								progressBar.setVisibility(View.GONE);
+							} else {
+								gpsTracker.showSettingsAlert();
+								progressBar.setVisibility(View.GONE);
+							}
 						} else {
-							// can't get location
-							// GPS or Network is not enabled
-							// Ask user to enable GPS/network in settings
-							gpsTracker.showSettingsAlert();
+							Toast.makeText(getContext(), getContext().getResources().getString(R.string.no_network_alert), Toast.LENGTH_SHORT).show();
+							progressBar.setVisibility(View.GONE);
 						}
-						progressBar.setVisibility(View.GONE);
+
+
 
 					}
 				});
@@ -198,10 +204,14 @@ public class LocationSettingFragment extends AbstractPrayerFragment {
 			public void onTextChanged(CharSequence cs, int arg1, int arg2,
 					int arg3) {
 				// When user changed the Text
-				if (cs.length() > 3 && isNetworkAvailable()) {
-					AsyncGeocoderUtil task = new AsyncGeocoderUtil(getActivity(), cs.toString(), ACTION_FOR_INTENT_CALLBACK);
-					task.execute(geocoder);
-					progressBar.setVisibility(View.VISIBLE);
+				if (cs.length() > 3) {
+					if (isNetworkAvailable()) {
+						AsyncGeocoderUtil task = new AsyncGeocoderUtil(getActivity(), cs.toString(), ACTION_FOR_INTENT_CALLBACK);
+						task.execute(geocoder);
+						progressBar.setVisibility(View.VISIBLE);
+					} else {
+						Toast.makeText(getContext(), getContext().getResources().getString(R.string.no_network_alert), Toast.LENGTH_SHORT).show();
+					}
 				}
 
 			}
@@ -215,9 +225,6 @@ public class LocationSettingFragment extends AbstractPrayerFragment {
 
 			@Override
 			public void afterTextChanged(Editable arg0) {
-				if (!isNetworkAvailable()) {
-					Toast.makeText(getContext(), getContext().getResources().getString(R.string.no_network_alert), Toast.LENGTH_LONG).show();
-				}
 			}
 		});
 	}
@@ -240,7 +247,8 @@ public class LocationSettingFragment extends AbstractPrayerFragment {
 		public void onReceive(Context context, Intent intent)
 		{
 			String response = intent.getStringExtra(AsyncTaskUtil.HTTP_RESPONSE);
-			List<Location> locations = gson.fromJson(response, List.class);
+			Type listType = new TypeToken<ArrayList<Location>>() {}.getType();
+			List<Location> locations = gson.fromJson(response, listType);
 
 			adapter = new LocationAdapter(
 					getContext(),

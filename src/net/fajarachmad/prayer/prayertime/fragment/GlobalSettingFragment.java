@@ -14,6 +14,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.preference.PreferenceFragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import net.fajarachmad.prayer.activity.MainActivity;
 import net.fajarachmad.prayer.R;
@@ -36,7 +39,6 @@ public class GlobalSettingFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
         sharedPrefs =  PreferenceManager.getDefaultSharedPreferences(getActivity());
         fragment = this;
-        setLocale();
         addPreferencesFromResource(R.xml.setting_layout);
         ((MainActivity)getActivity()).setActivityTitle(getActivity().getResources().getString(R.string.menu_settings));
 
@@ -83,9 +85,8 @@ public class GlobalSettingFragment extends PreferenceFragment {
             public boolean onPreferenceChange(Preference preference, Object value) {
                 findPreference(PREF_LANGUAGE_KEY).setSummary(getValueByKey(R.array.languageValues, R.array.language, value.toString()));
                 ((ListPreference)findPreference(PREF_LANGUAGE_KEY)).setValue(value.toString());
-                FragmentManager manager = getActivity().getSupportFragmentManager();
-                FragmentTransaction ft = manager.beginTransaction();
-                ft.replace(R.id.container, new GlobalSettingFragment()).commit();
+                setLocale();
+                getActivity().recreate();
                 return false;
             }
         });
@@ -109,6 +110,11 @@ public class GlobalSettingFragment extends PreferenceFragment {
                 return false;
             }
         });
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup, Bundle paramBundle) {
+        return super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);
     }
 
     private String getValueByKey(int id, int valueId, String key) {

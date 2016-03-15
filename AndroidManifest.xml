@@ -30,6 +30,7 @@
             </intent-filter>
         </activity>
         <activity android:name="net.fajarachmad.prayer.activity.NotificationSetupActivity" />
+        <activity android:name="net.fajarachmad.prayer.activity.SettingsActivity" />
 
         <receiver android:name=".common.notification.NotificationPublisher" />
         <receiver android:name=".common.notification.DismissButtonListener" >

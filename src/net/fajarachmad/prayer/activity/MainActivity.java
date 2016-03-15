@@ -135,11 +135,12 @@ public class MainActivity extends AppCompatActivity {
     	switch (item.getItemId()) {
    	 
             case R.id.action_settings:
-            getSupportFragmentManager()
+            /*getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.container, new GlobalSettingFragment())
                     .addToBackStack(null)
-                    .commit();
+                    .commit();*/
+                startActivityForResult(new Intent(this, SettingsActivity.class), 1000);
             break;
  
         }

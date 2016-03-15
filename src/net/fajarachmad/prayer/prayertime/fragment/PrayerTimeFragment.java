@@ -450,10 +450,10 @@ public class PrayerTimeFragment extends AbstractPrayerFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch (item.getItemId()) {
     	case 12:
-			getFragmentManager()
-					.beginTransaction()
-					.replace(R.id.container, new LocationSettingFragment())
-					.addToBackStack(null)
+			LocationSettingFragment locationSettingFragment = new LocationSettingFragment();
+			locationSettingFragment.setTargetFragment(PrayerTimeFragment.this, LOCATION_SETTING_ID);
+			getFragmentManager().beginTransaction()
+					.replace(R.id.container, locationSettingFragment).addToBackStack(null)
 					.commit();
     		break;
         }
