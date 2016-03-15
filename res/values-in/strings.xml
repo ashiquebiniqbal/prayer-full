@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Jadwal Sholat</string>
-	<string name="location_setting_title">Pengaturan Lokasi</string>
+	<string name="location_setting_title">Perbaharui Lokasi</string>
     <string name="navigation_drawer_open">Membuka Navigasi</string>
     <string name="navigation_drawer_close">Menutup Navigasi</string>
 	<string name="upcoming_prayer">Shalat selanjutnya</string>
@@ -81,4 +81,6 @@
     <string name="qibla">Qibla</string>
     <string name="from">dari</string>
     <string name="degrees">50&#xb0;</string>
+    <string name="no_network_alert">Koneksi internet tidak terhubung</string>
+    <string name="gps_not_available_alert">Nyalakan layanan lokasi untuk mengizinkan aplikasi mengetahui lokasi anda</string>
 </resources>

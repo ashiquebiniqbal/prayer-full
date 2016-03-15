@@ -27,13 +27,13 @@
             android:layout_below="@+id/prayertime_compass_locationname"
             android:textSize="10sp"/>
 
-        <TextView
+        <ImageView
             android:id="@+id/prayertime_compass_center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:layout_below="@+id/prayertime_compass_heading"
-            android:text="^"/>
+            android:src="@drawable/ic_arrow_drop_up_black"/>
 
         <ImageView
             android:id="@+id/prayertime_compass_bg"

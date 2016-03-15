@@ -192,10 +192,10 @@ public class GPSTracker extends Service implements LocationListener {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
 
         //Setting Dialog Title
-        alertDialog.setTitle("Error GPS");
+        //alertDialog.setTitle("Error GPS");
 
         //Setting Dialog Message
-        alertDialog.setMessage("Error euy");
+        alertDialog.setMessage(mContext.getResources().getString(net.fajarachmad.prayer.R.string.gps_not_available_alert));
 
         //On Pressing Setting button
         alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {

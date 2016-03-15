@@ -4,36 +4,33 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:gravity="top" >
-    
-   <!--  <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/location_toolbar"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?attr/colorPrimary"
-    android:minHeight="?attr/actionBarSize"
-    app:navigationContentDescription="@string/abc_action_bar_up_description"
-    app:navigationIcon="?attr/homeAsUpIndicator"
-    app:titleTextColor="@color/foreground_material_dark"
-    app:theme="@style/AppTheme"/> -->
 
+    <include layout="@layout/common_toolbar" />
+    
     <!-- Editext for Search -->
-    <EditText android:id="@+id/inputSearch"
+    <EditText android:id="@+id/prayertime_location_inputSearch"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:hint="@string/search_location"
         android:inputType="textVisiblePassword"/>
     
     <Button
-        android:id="@+id/btn_current_location"
+        android:id="@+id/prayertime_location_btncurrentlocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/use_current_location" />
   
     <!-- List View -->
+
+    <ProgressBar
+        android:id="@+id/prayertime_location_progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"/>
+
     <ListView
-        android:id="@+id/list_view"
+        android:id="@+id/prayertime_location_listview"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 

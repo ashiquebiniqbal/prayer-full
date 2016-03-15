@@ -1,6 +1,9 @@
 package net.fajarachmad.prayer.prayertime.fragment;
 
+import static net.fajarachmad.prayer.common.constant.AppConstant.*;
+
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -10,12 +13,19 @@ import com.google.gson.Gson;
 import net.fajarachmad.prayer.activity.MainActivity;
 import net.fajarachmad.prayer.R;
 import net.fajarachmad.prayer.common.constant.AppConstant;
+import net.fajarachmad.prayer.common.fragment.AbstractPrayerFragment;
+import net.fajarachmad.prayer.common.util.AsyncGeocoderUtil;
+import net.fajarachmad.prayer.common.util.AsyncTaskUtil;
+import net.fajarachmad.prayer.common.util.GooglePlaceUtil;
+import net.fajarachmad.prayer.prayertime.wrapper.GooglePlace;
 import net.fajarachmad.prayer.prayertime.wrapper.Location;
 import net.fajarachmad.prayer.common.util.GPSTracker;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
@@ -38,9 +48,15 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class LocationSettingFragment extends Fragment implements AppConstant {
+import org.apache.http.client.methods.HttpGet;
+
+public class LocationSettingFragment extends AbstractPrayerFragment {
+
+	private static final String ACTION_FOR_INTENT_CALLBACK = "THIS_IS_A_UNIQUE_KEY_WE_USE_TO_COMMUNICATE";
 
 	private SharedPreferences sharedPrefs;
 	// List view
@@ -53,10 +69,14 @@ public class LocationSettingFragment extends Fragment implements AppConstant {
     private EditText inputSearch;
     
     private Geocoder geocoder;
+	private Gson gson;
+	private ProgressBar progressBar;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		hideParentToolbar();
+		gson = new Gson();
 	}
 
 	@Override
@@ -77,10 +97,15 @@ public class LocationSettingFragment extends Fragment implements AppConstant {
 			}
 		});
 
+		setCustomToolbar(rootView, getContext().getResources().getString(R.string.location_setting_title));
+
 		// Listview Data
 		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-		lv = (ListView) rootView.findViewById(R.id.list_view);
-		inputSearch = (EditText) rootView.findViewById(R.id.inputSearch);
+		lv = (ListView) rootView.findViewById(R.id.prayertime_location_listview);
+		inputSearch = (EditText) rootView.findViewById(R.id.prayertime_location_inputSearch);
+		progressBar = (ProgressBar) rootView.findViewById(R.id.prayertime_location_progressbar);
+
+		progressBar.setVisibility(View.GONE);
 
 		geocoder = new Geocoder(getContext(), new Locale(sharedPrefs.getString(PREF_LANGUAGE_KEY, DEFAULT_LANGUAGE)));
 		setInputSearchListener();
@@ -93,13 +118,15 @@ public class LocationSettingFragment extends Fragment implements AppConstant {
 	}
 
 	private void setButtonCurrentLocationListener(View rootView) {
-		rootView.findViewById(R.id.btn_current_location).setOnClickListener(
+		rootView.findViewById(R.id.prayertime_location_btncurrentlocation).setOnClickListener(
 				new OnClickListener() {
 
 					@Override
 					public void onClick(View v) {
+						progressBar.setVisibility(View.VISIBLE);
 						GPSTracker gpsTracker = new GPSTracker(getContext());
 						if (isNetworkAvailable() && gpsTracker.getIsGPSTrackingEnabled()) {
+
 							double latitude = gpsTracker.getLatitude();
 							double longitude = gpsTracker.getLongitude();
 							String country = gpsTracker.getCountryName(getContext());
@@ -135,6 +162,7 @@ public class LocationSettingFragment extends Fragment implements AppConstant {
 							// Ask user to enable GPS/network in settings
 							gpsTracker.showSettingsAlert();
 						}
+						progressBar.setVisibility(View.GONE);
 
 					}
 				});
@@ -171,29 +199,9 @@ public class LocationSettingFragment extends Fragment implements AppConstant {
 					int arg3) {
 				// When user changed the Text
 				if (cs.length() > 3 && isNetworkAvailable()) {
-					try {
-						List<Address> addresses = geocoder.getFromLocationName(
-								cs.toString(), 50);
-						List<Location> locations = new ArrayList<Location>();
-						for (Address address : addresses) {
-							Location location = new Location();
-							location.setAddressLine(address.getAddressLine(0));
-							location.setCity(address.getFeatureName());
-							location.setCountry(address.getCountryName());
-							location.setPostalCode(address.getPostalCode());
-							location.setLatitude(address.getLatitude());
-							location.setLongitude(address.getLongitude());
-							locations.add(location);
-						}
-
-						adapter = new LocationAdapter(
-								getContext(),
-								R.layout.prayertime_location_item,
-								R.id.location_name, locations);
-						lv.setAdapter(adapter);
-					} catch (IOException e) {
-						Log.e("Prayer", e.getMessage());
-					}
+					AsyncGeocoderUtil task = new AsyncGeocoderUtil(getActivity(), cs.toString(), ACTION_FOR_INTENT_CALLBACK);
+					task.execute(geocoder);
+					progressBar.setVisibility(View.VISIBLE);
 				}
 
 			}
@@ -207,10 +215,42 @@ public class LocationSettingFragment extends Fragment implements AppConstant {
 
 			@Override
 			public void afterTextChanged(Editable arg0) {
-				// TODO Auto-generated method stub
+				if (!isNetworkAvailable()) {
+					Toast.makeText(getContext(), getContext().getResources().getString(R.string.no_network_alert), Toast.LENGTH_LONG).show();
+				}
 			}
 		});
 	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		getActivity().registerReceiver(receiver, new IntentFilter(ACTION_FOR_INTENT_CALLBACK));
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		getActivity().unregisterReceiver(receiver);
+	}
+
+	private BroadcastReceiver receiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			String response = intent.getStringExtra(AsyncTaskUtil.HTTP_RESPONSE);
+			List<Location> locations = gson.fromJson(response, List.class);
+
+			adapter = new LocationAdapter(
+					getContext(),
+					R.layout.prayertime_location_item,
+					R.id.location_name, locations);
+			lv.setAdapter(adapter);
+
+			progressBar.setVisibility(View.GONE);
+		}
+	};
 
 	public class LocationAdapter extends ArrayAdapter<Location> {
 

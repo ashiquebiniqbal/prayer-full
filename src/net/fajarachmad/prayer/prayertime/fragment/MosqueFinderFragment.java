@@ -21,6 +21,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -120,14 +122,22 @@ public class MosqueFinderFragment extends AbstractPrayerFragment {
 	private void initializeMap() {
 		if (googleMap == null && mapsSupported) {
 			mapView = (MapView) getView().findViewById(R.id.map);
-			googleMap = mapView.getMap();
-            googleMap.setMyLocationEnabled(true);
+            mapView.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap map) {
+                    googleMap = map;
 
-            CameraPosition cameraPosition = new CameraPosition.Builder().target(
-                    new LatLng(prayer.getLocation().getLatitude(), prayer.getLocation().getLongitude())).zoom(15).build();
+                    googleMap.setMyLocationEnabled(true);
+
+                    CameraPosition cameraPosition = new CameraPosition.Builder().target(
+                            new LatLng(prayer.getLocation().getLatitude(), prayer.getLocation().getLongitude())).zoom(15).build();
 
 
-			googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                }
+            });
+
+
 		}
 	}
 
@@ -139,8 +149,8 @@ public class MosqueFinderFragment extends AbstractPrayerFragment {
 
 	@Override
 	public void onResume() {
-		super.onResume();
-		mapView.onResume();
+        super.onResume();
+        mapView.onResume();
 		initializeMap();
         getActivity().registerReceiver(receiver, new IntentFilter(ACTION_FOR_INTENT_CALLBACK));
 	}
@@ -212,17 +222,6 @@ public class MosqueFinderFragment extends AbstractPrayerFragment {
                 ((TextView) view.findViewById(R.id.mosque_name)).setText(location.getName());
                 ((TextView) view.findViewById(R.id.mosque_address_line)).setText(location.getVicinity());
                 ImageView imageView = (ImageView)view.findViewById(R.id.mosque_icon);
-                /*try {
-                    URL url = new URL(location.getIcon());
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.setDoInput(true);
-                    connection.connect();
-                    InputStream input = connection.getInputStream();
-                    Bitmap myBitmap = BitmapFactory.decodeStream(input);
-                    imageView.setImageBitmap(myBitmap);
-                } catch (Exception e) {
-                    Log.e("error", "error", e);
-                }*/
                 imageView.setImageDrawable(getContext().getResources().getDrawable(R.drawable.prayer_mosque));
 
             }

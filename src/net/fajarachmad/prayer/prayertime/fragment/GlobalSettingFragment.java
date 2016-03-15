@@ -11,6 +11,8 @@ import android.preference.Preference;
 
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.preference.PreferenceFragment;
 
 import net.fajarachmad.prayer.activity.MainActivity;
@@ -81,8 +83,9 @@ public class GlobalSettingFragment extends PreferenceFragment {
             public boolean onPreferenceChange(Preference preference, Object value) {
                 findPreference(PREF_LANGUAGE_KEY).setSummary(getValueByKey(R.array.languageValues, R.array.language, value.toString()));
                 ((ListPreference)findPreference(PREF_LANGUAGE_KEY)).setValue(value.toString());
-                //getFragmentManager().beginTransaction().remove(fragment).replace(R.id.container, new GlobalSettingFragment()).commit();
-                getFragmentManager().beginTransaction().detach(fragment).attach(new GlobalSettingFragment()).commit();
+                FragmentManager manager = getActivity().getSupportFragmentManager();
+                FragmentTransaction ft = manager.beginTransaction();
+                ft.replace(R.id.container, new GlobalSettingFragment()).commit();
                 return false;
             }
         });

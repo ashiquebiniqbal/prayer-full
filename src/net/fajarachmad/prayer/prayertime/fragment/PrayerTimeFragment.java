@@ -1,5 +1,47 @@
 package net.fajarachmad.prayer.prayertime.fragment;
 
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.res.Configuration;
+import android.os.Bundle;
+import android.os.Handler;
+import android.preference.PreferenceManager;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.google.gson.Gson;
+
+import net.fajarachmad.prayer.R;
+import net.fajarachmad.prayer.activity.MainActivity;
+import net.fajarachmad.prayer.common.adapter.ScreenSlidePagerAdapter;
+import net.fajarachmad.prayer.common.fragment.AbstractPrayerFragment;
+import net.fajarachmad.prayer.prayertime.adapter.PrayerItemAdapter;
+import net.fajarachmad.prayer.prayertime.service.PrayerTimeService;
+import net.fajarachmad.prayer.prayertime.wrapper.Location;
+import net.fajarachmad.prayer.prayertime.wrapper.Prayer;
+import net.fajarachmad.prayer.prayertime.wrapper.PrayerItemWrapper;
+import net.fajarachmad.prayer.prayertime.wrapper.PrayerTime;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import static net.fajarachmad.prayer.common.constant.AppConstant.ACTION;
 import static net.fajarachmad.prayer.common.constant.AppConstant.ACTION_GET_PRAYER_TIME;
 import static net.fajarachmad.prayer.common.constant.AppConstant.ACTION_STOP_SOUND;
@@ -50,47 +92,6 @@ import static net.fajarachmad.prayer.common.constant.AppConstant.PREF_ONPRAY_ALA
 import static net.fajarachmad.prayer.common.constant.AppConstant.PREF_ONPRAY_SOUND_KEY;
 import static net.fajarachmad.prayer.common.constant.AppConstant.REQUEST_CODE_COMPASS_PAGE;
 import static net.fajarachmad.prayer.common.constant.AppConstant.REQUEST_CODE_MOSQUE_FINDER_PAGE;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import net.fajarachmad.prayer.activity.MainActivity;
-import net.fajarachmad.prayer.R;
-import net.fajarachmad.prayer.prayertime.adapter.PrayerItemAdapter;
-import net.fajarachmad.prayer.prayertime.wrapper.PrayerItemWrapper;
-import net.fajarachmad.prayer.common.adapter.ScreenSlidePagerAdapter;
-import net.fajarachmad.prayer.common.fragment.AbstractPrayerFragment;
-import net.fajarachmad.prayer.prayertime.wrapper.Location;
-import net.fajarachmad.prayer.prayertime.wrapper.Prayer;
-import net.fajarachmad.prayer.prayertime.wrapper.PrayerTime;
-import net.fajarachmad.prayer.prayertime.service.PrayerTimeService;
-import android.app.NotificationManager;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.content.res.Configuration;
-import android.os.Bundle;
-import android.os.Handler;
-import android.preference.PreferenceManager;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.google.gson.Gson;
 
 public class PrayerTimeFragment extends AbstractPrayerFragment {
 	
@@ -440,7 +441,7 @@ public class PrayerTimeFragment extends AbstractPrayerFragment {
     
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    	menu.add(Menu.NONE, 12, Menu.NONE, getContext().getResources().getString(R.string.location_setting_title)).setIcon(R.drawable.prayer_pin_location_icon)
+    	menu.add(Menu.NONE, 12, Menu.NONE, getContext().getResources().getString(R.string.location_setting_title)).setIcon(R.drawable.ic_place_white)
         .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
     	super.onCreateOptionsMenu(menu, inflater);
     }
@@ -449,11 +450,11 @@ public class PrayerTimeFragment extends AbstractPrayerFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch (item.getItemId()) {
     	case 12:
-    		LocationSettingFragment locationSettingFragment = new LocationSettingFragment();
-			locationSettingFragment.setTargetFragment(PrayerTimeFragment.this, LOCATION_SETTING_ID);
-			 fragment.getFragmentManager().beginTransaction()
-                .replace(R.id.container, locationSettingFragment).addToBackStack(null)
-                .commit();
+			getFragmentManager()
+					.beginTransaction()
+					.replace(R.id.container, new LocationSettingFragment())
+					.addToBackStack(null)
+					.commit();
     		break;
         }
 

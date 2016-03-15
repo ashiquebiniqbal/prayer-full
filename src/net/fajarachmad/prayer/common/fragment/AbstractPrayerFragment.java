@@ -1,5 +1,6 @@
 package net.fajarachmad.prayer.common.fragment;
 
+
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -32,8 +33,8 @@ public abstract class AbstractPrayerFragment extends Fragment {
 
     protected void hideParentToolbar() {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.getSupportActionBar().setShowHideAnimationEnabled(false);
         if (activity.getSupportActionBar() != null) {
+            activity.getSupportActionBar().setShowHideAnimationEnabled(false);
             activity.getSupportActionBar().hide();
             ((DrawerLayout)activity.findViewById(R.id.drawer_layout)).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         }
@@ -43,7 +44,7 @@ public abstract class AbstractPrayerFragment extends Fragment {
     protected void setCustomToolbar(View view, String title, String subtitle) {
         toolbar = (Toolbar) view.findViewById(R.id.evaluation_detail_toolbar);
         toolbar.setTitle(title);
-        toolbar.setNavigationIcon(R.drawable.prayer_back_icon);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
         toolbar.setTitleTextColor(getContext().getResources().getColor(R.color.white));
         if (subtitle != null) {
             toolbar.setSubtitleTextColor(getContext().getResources().getColor(R.color.white));
