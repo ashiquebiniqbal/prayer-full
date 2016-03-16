@@ -14,6 +14,7 @@ import com.roomorama.caldroid.CaldroidGridAdapter;
 import net.fajarachmad.prayer.R;
 import net.fajarachmad.prayer.common.wrapper.KeyValue;
 import net.fajarachmad.prayer.evaluation.wrapper.Achievment;
+import net.fajarachmad.prayer.evaluation.wrapper.EvaluationItem;
 
 import java.text.SimpleDateFormat;
 import java.util.Map;
@@ -28,12 +29,14 @@ public class EvaluationStatisticCalendarAdapter extends CaldroidGridAdapter {
     public static String ACHIEVMENT_LIST = "achievment_today";
 
     private SimpleDateFormat dateFormater;
+    private Context context;
 
     public EvaluationStatisticCalendarAdapter(Context context, int month, int year,
                                        Map<String, Object> caldroidData,
                                        Map<String, Object> extraData) {
         super(context, month, year, caldroidData, extraData);
         dateFormater = new SimpleDateFormat("dd-MM-yyyy");
+        this.context = context;
     }
 
     @Override
@@ -117,7 +120,14 @@ public class EvaluationStatisticCalendarAdapter extends CaldroidGridAdapter {
             String key = new StringBuilder().append(dateTime.getDay()).append(dateTime.getMonth()).append(dateTime.getYear()).toString();
             if (achievmentMap.containsKey(key)) {
                 Achievment achievment = (Achievment)achievmentMap.get(key);
-                tv2.setText(new StringBuilder().append(achievment.getAchievment()).append(" ").append(achievment.getTargentUnit()));
+                if (achievment.getEntryType() != null && achievment.getEntryType().equals(EvaluationItem.ENTRY_TYPE_YES_NO)) {
+                    tv2.setText(new StringBuilder().append(achievment.getAchievment().equals("1") ? context.getResources().getString(R.string.yes) : context.getResources().getString(R.string.no)));
+                } else {
+                    tv2.setText(new StringBuilder().append(achievment.getAchievment()).append(" ").append(achievment.getTargentUnit()));
+                }
+
+            } else {
+                tv2.setText("");
             }
 
         }

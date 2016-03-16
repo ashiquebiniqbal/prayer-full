@@ -20,6 +20,7 @@ import net.fajarachmad.prayer.activity.MainActivity;
 import net.fajarachmad.prayer.R;
 import net.fajarachmad.prayer.common.fragment.AbstractPrayerFragment;
 import net.fajarachmad.prayer.common.util.ResourceUtil;
+import net.fajarachmad.prayer.common.util.StringUtil;
 import net.fajarachmad.prayer.evaluation.service.EvaluationService;
 import net.fajarachmad.prayer.evaluation.wrapper.EvaluationItem;
 import net.fajarachmad.prayer.evaluation.wrapper.EvaluationItemWrapper;
@@ -40,14 +41,13 @@ public class EvaluationItemEntryFragment extends AbstractPrayerFragment {
     private TextView txtTarget;
     private TextView txtTargetUnit;
     private Spinner txtTargetFrequency;
-    private RadioButton rdbEntryTypeYesNo;
-    private RadioButton rdbEntryTypeFree;
 
     private SimpleDateFormat dateFormatter;
     private TextView txtEndDate;
     private EvaluationService evaluationService;
     private EvaluationItemWrapper currentData;
-    private Gson gson;
+    private Date startDate;
+    private SimpleDateFormat format;
 
     public static EvaluationItemEntryFragment newInstance(EvaluationItemWrapper data) {
         EvaluationItemEntryFragment f = new EvaluationItemEntryFragment();
@@ -62,9 +62,10 @@ public class EvaluationItemEntryFragment extends AbstractPrayerFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         hideParentToolbar();
-        dateFormatter = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
+        dateFormatter = new SimpleDateFormat("dd-MM-yyyy", getResources().getConfiguration().locale);
+        format = new SimpleDateFormat("E, MMM d yyyy", getResources().getConfiguration().locale);
         evaluationService = EvaluationService.getInstance(getContext());
-        gson = new Gson();
+        Gson gson = new Gson();
         if (getArguments() != null) {
             currentData = gson.fromJson(getArguments().getString(EvaluationItemWrapper.class.getName()), EvaluationItemWrapper.class);
         }
@@ -78,7 +79,9 @@ public class EvaluationItemEntryFragment extends AbstractPrayerFragment {
 
         setupInputElement(rootView);
 
-        setCustomToolbar(rootView, getContext().getResources().getString(R.string.new_goal));
+        String title = currentData == null ? getContext().getResources().getString(R.string.new_goal) : getContext().getResources().getString(R.string.edit_goal);
+
+        setCustomToolbar(rootView, title);
         setBtnSaveOnClickListener();
         setEndDateOnClickListener(rootView);
         return rootView;
@@ -91,8 +94,19 @@ public class EvaluationItemEntryFragment extends AbstractPrayerFragment {
         txtTargetUnit = (TextView) view.findViewById(R.id.evalluation_entry_txt_targetunit);
         txtTargetFrequency = (Spinner) view.findViewById(R.id.evalluation_entry_txt_frequency);
         txtEndDate = (TextView)view.findViewById(R.id.evaluation_entry_enddate);
-        rdbEntryTypeFree = (RadioButton) view.findViewById(R.id.evaluation_entry_type_free);
-        rdbEntryTypeYesNo = (RadioButton) view.findViewById(R.id.evaluation_entry_type_yesno);
+        RadioButton rdbEntryTypeFree = (RadioButton) view.findViewById(R.id.evaluation_entry_type_free);
+        RadioButton rdbEntryTypeYesNo = (RadioButton) view.findViewById(R.id.evaluation_entry_type_yesno);
+
+        rdgEntryType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId != R.id.evaluation_entry_type_free) {
+                    txtTargetUnit.setVisibility(View.GONE);
+                } else {
+                    txtTargetUnit.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         if (currentData != null) {
             txtGoalname.setText(currentData.getGoalName());
@@ -105,9 +119,13 @@ public class EvaluationItemEntryFragment extends AbstractPrayerFragment {
                 rdbEntryTypeFree.setChecked(false);
                 rdbEntryTypeYesNo.setChecked(true);
             }
-            txtEndDate.setText(currentData.getDueDateString());
+
+            txtEndDate.setText(format.format(currentData.getStartDate()));
+            startDate = currentData.getStartDate();
+        } else {
+            startDate = new Date();
+            txtEndDate.setText(format.format(startDate));
         }
-        txtTargetFrequency.setSelection(2);
     }
 
     private void setEndDateOnClickListener(View view) {
@@ -118,7 +136,8 @@ public class EvaluationItemEntryFragment extends AbstractPrayerFragment {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
-                txtEndDate.setText(dateFormatter.format(newDate.getTime()));
+                txtEndDate.setText(format.format(newDate.getTime()));
+                startDate = newDate.getTime();
             }
 
         },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
@@ -140,7 +159,6 @@ public class EvaluationItemEntryFragment extends AbstractPrayerFragment {
         String goalName = txtGoalname.getText().toString();
         String target = txtTarget.getText().toString();
         String targetUnit = txtTargetUnit.getText().toString();
-        String endDate = txtEndDate.getText().toString();
         String targetFrequency = txtTargetFrequency.getSelectedItem().toString();
 
         String targetFreqCode = ResourceUtil.getValueByKey(getContext(), R.array.evaluationFrequency, R.array.evaluationFrequencyValue, targetFrequency);
@@ -155,16 +173,7 @@ public class EvaluationItemEntryFragment extends AbstractPrayerFragment {
         data.setTarget(target);
         data.setTargetUnit(targetUnit);
         data.setTargetFrequency(targetFreqCode);
-
-        if (endDate != null) {
-            try {
-                data.setEndDate(dateFormatter.parse(endDate));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-        }
-        data.setStartDate(new Date());
+        data.setStartDate(startDate);
         data.setCreationDate(new Date());
 
         return data;
@@ -177,13 +186,42 @@ public class EvaluationItemEntryFragment extends AbstractPrayerFragment {
             public boolean onMenuItemClick(MenuItem item) {
 
                 if (item.getItemId() == R.id.action_save) {
-                    evaluationService.save(convertElementInputToObject());
-                    getFragmentManager().popBackStack();
+                    if( validate() ) {
+                        evaluationService.save(convertElementInputToObject());
+                        getFragmentManager().popBackStack();
+                    }
                 }
 
                 return false;
             }
         });
+    }
+
+    private boolean validate() {
+        boolean isValid = true;
+        if (StringUtil.isBlank(txtGoalname.getText().toString())) {
+            txtGoalname.setError("Goal name should not be empty");
+            isValid = false;
+        }
+
+        if (StringUtil.isBlank(txtTarget.getText().toString())) {
+            txtTarget.setError("Target should not be empty");
+            isValid = false;
+        }
+
+        if (rdgEntryType.getCheckedRadioButtonId() != R.id.evaluation_entry_type_yesno) {
+            if (StringUtil.isBlank(txtTargetUnit.getText().toString())) {
+                txtTargetUnit.setError("Target unit should not be empty");
+                isValid = false;
+            }
+        }
+
+        if (StringUtil.isBlank(txtEndDate.getText().toString())) {
+            txtEndDate.setError("Start date should not be empty");
+            isValid = false;
+        }
+
+        return isValid;
     }
 
 }

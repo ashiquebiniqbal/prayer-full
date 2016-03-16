@@ -10,10 +10,9 @@ public class EvaluationItemWrapper {
     private String id;
     private String goalName;
     private Date startDate;
-    private Date endDate;
     private float progress;
     private String progressString;
-    private String dueDateString;
+    private String startDateStr;
     private String targetUnit;
     private String target;
     private String entryType;
@@ -24,7 +23,7 @@ public class EvaluationItemWrapper {
         this.id = id;
         this.goalName = goalName;
         this.progressString = progress;
-        this.dueDateString = dueDate;
+        this.startDateStr = dueDate;
     }
 
     public String getId() {
@@ -35,12 +34,12 @@ public class EvaluationItemWrapper {
         this.id = id;
     }
 
-    public String getDueDateString() {
-        return dueDateString;
+    public String getStartDateStr() {
+        return startDateStr;
     }
 
-    public void setDueDateString(String dueDateString) {
-        this.dueDateString = dueDateString;
+    public void setStartDateStr(String startDateStr) {
+        this.startDateStr = startDateStr;
     }
 
     public String getGoalName() {
@@ -57,14 +56,6 @@ public class EvaluationItemWrapper {
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
     }
 
     public float getProgress() {

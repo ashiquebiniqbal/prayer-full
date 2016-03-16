@@ -17,7 +17,6 @@ public class EvaluationItem {
     private String targetUnit;
     private String targetFrequency;
     private Date startDate;
-    private Date endDate;
     private Date creationDate;
 
     public String getId() {
@@ -66,14 +65,6 @@ public class EvaluationItem {
 
     public void setTargetFrequency(String targetFrequency) {
         this.targetFrequency = targetFrequency;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
     }
 
     public Date getCreationDate() {

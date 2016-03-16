@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -22,12 +24,12 @@ import net.fajarachmad.prayer.common.fragment.AbstractPrayerFragment;
 import net.fajarachmad.prayer.evaluation.adapter.EvaluationStatisticCalendarAdapter;
 import net.fajarachmad.prayer.evaluation.service.EvaluationService;
 import net.fajarachmad.prayer.evaluation.wrapper.Achievment;
+import net.fajarachmad.prayer.evaluation.wrapper.EvaluationItem;
 import net.fajarachmad.prayer.evaluation.wrapper.EvaluationItemWrapper;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,6 +48,10 @@ public class EvaluationStatisticFragment extends AbstractPrayerFragment {
     private EvaluationService evaluationService;
     private Achievment achievment;
     private Fragment parentFragment;
+    private RadioGroup rdgAcheivement;
+    private RadioButton rdAchevementYes;
+    private RadioButton rdAchevementNo;
+    private Date selectedCalendarDate;
 
     public static EvaluationStatisticFragment newInstance(EvaluationItemWrapper evaluationItem) {
         EvaluationStatisticFragment fragment = new EvaluationStatisticFragment();
@@ -85,9 +91,8 @@ public class EvaluationStatisticFragment extends AbstractPrayerFragment {
         args.putBoolean(CaldroidFragment.ENABLE_CLICK_ON_DISABLED_DATES, false);
         calendarFragment.setArguments(args);
 
-        if (evaluationItem.getStartDate() != null && evaluationItem.getEndDate() != null) {
+        if (evaluationItem.getStartDate() != null) {
             calendarFragment.setMinDate(evaluationItem.getStartDate());
-            calendarFragment.setMaxDate(evaluationItem.getEndDate());
         }
 
         Map<String, Object> achievmentMap = evaluationService.getAchievmentMap(evaluationItem.getId());
@@ -98,64 +103,124 @@ public class EvaluationStatisticFragment extends AbstractPrayerFragment {
             @Override
             public void onSelectDate(final Date date, View view) {
                 achievment = evaluationService.getAchievmentByDate(evaluationItem.getId(), date);
+                selectedCalendarDate = date;
+                calendarFragment.clearSelectedDates();
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 StringBuilder title = new StringBuilder();
-                title.append("I have achieved ");
-                title.append(evaluationItem.getGoalName());
-                title.append(" on ");
-                title.append(dateFormatter.format(date));
-                builder.setView(R.layout.evaluation_statistic_calendar_entry);
+                if (evaluationItem.getEntryType().equals(EvaluationItem.ENTRY_TYPE_FREE)) {
+                    title.append("How many ");
+                    title.append('"');
+                    title.append(evaluationItem.getTargetUnit());
+                    title.append('"');
+                    title.append(" you have achieved today ?");
+                    builder.setView(R.layout.evaluation_statistic_calendar_entry_free);
+                } else {
+                    title.append("Have you completed your target today ?");
+                    builder.setView(R.layout.evaluation_statistic_calendar_entry_yesno);
+                }
+
+                if (achievment != null) {
+                    builder.setNegativeButton(getResources().getString(R.string.remove), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dg, int which) {
+
+                            evaluationService.delete(achievment);
+                            refreshCalendarView();
+                            dialog.hide();
+                            calendarFragment.setSelectedDate(selectedCalendarDate);
+                        }
+                    });
+                }
+
+
                 builder.setPositiveButton(getContext().getResources().getString(R.string.set), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        String achievmentInput = txtAchievment.getText().toString();
-
-                        if (achievment == null) {
-                            achievment = new Achievment();
+                        String achievmentInput = null;
+                        if (evaluationItem.getEntryType().equals(EvaluationItem.ENTRY_TYPE_FREE)) {
+                            achievmentInput = txtAchievment.getText().toString();
+                        } else {
+                            if (rdgAcheivement.getCheckedRadioButtonId() == R.id.evalluation_statistic_calendar_entry_yes) {
+                                achievmentInput = "1";
+                            } else {
+                                achievmentInput = "0";
+                            }
                         }
-                        achievment.setEvaluationId(evaluationItem.getId());
-                        achievment.setDate(date);
-                        achievment.setAchievment(achievmentInput);
-                        achievment.setTargentUnit(evaluationItem.getTargetUnit());
-                        evaluationService.save(achievment);
 
-                        Map<String, Object> achievmentMap = evaluationService.getAchievmentMap(evaluationItem.getId());
-                        Map<String, Object> extraData = calendarFragment.getExtraData();
-                        extraData.put(EvaluationStatisticCalendarAdapter.ACHIEVMENT_LIST, achievmentMap);
+                        if (achievmentInput != null) {
+                            if (achievment == null) {
+                                achievment = new Achievment();
+                            }
+                            achievment.setEvaluationId(evaluationItem.getId());
+                            achievment.setDate(date);
+                            achievment.setAchievment(achievmentInput);
+                            achievment.setTargentUnit(evaluationItem.getTargetUnit());
+                            achievment.setEntryType(evaluationItem.getEntryType());
+                            evaluationService.save(achievment);
 
-                        calendarFragment.refreshView();
-
-                        float currentProgress = evaluationService.calculateCurrentProgress(evaluationItem.getId(), evaluationItem.getTarget());
-                        String subtitle = new StringBuilder()
-                                .append(getContext().getResources().getString(R.string.progress))
-                                .append(": ").append(currentProgress).append("%").toString();
-                        ((Toolbar)parentFragment.getView().findViewById(R.id.evaluation_detail_toolbar)).setSubtitle(subtitle);
+                            refreshCalendarView();
+                        }
                         dialog.hide();
+                        calendarFragment.setSelectedDate(selectedCalendarDate);
                     }
                 });
 
-                builder.setNegativeButton(getContext().getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                builder.setNeutralButton(getContext().getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialog.hide();
+                        calendarFragment.setSelectedDate(selectedCalendarDate);
                     }
                 });
 
                 builder.setTitle(title.toString());
                 dialog = builder.show();
-                txtAchievment = (EditText) dialog.findViewById(R.id.evaluation_statistic_calendar_entry_txttarget);
-                txtTargetUnit = (TextView) dialog.findViewById(R.id.evaluation_statistic_calendar_entry_targetunit);
-                txtTargetUnit.setText(evaluationItem.getTargetUnit());
+                if (evaluationItem.getEntryType().equals(EvaluationItem.ENTRY_TYPE_FREE)) {
+                    txtAchievment = (EditText) dialog.findViewById(R.id.evaluation_statistic_calendar_entry_txttarget);
+                    txtTargetUnit = (TextView) dialog.findViewById(R.id.evaluation_statistic_calendar_entry_targetunit);
+                    txtTargetUnit.setText(evaluationItem.getTargetUnit());
 
-                if (achievment != null) {
-                    txtAchievment.setText(achievment.getAchievment());
+                    if (achievment != null) {
+                        txtAchievment.setText(achievment.getAchievment());
+                    }
+                } else {
+                    rdgAcheivement = (RadioGroup) dialog.findViewById(R.id.evalluation_statistic_calendar_entry_rdg);
+                    rdAchevementYes = (RadioButton) dialog.findViewById(R.id.evalluation_statistic_calendar_entry_yes);
+                    rdAchevementNo = (RadioButton) dialog.findViewById(R.id.evalluation_statistic_calendar_entry_no);
+                    if (achievment != null) {
+                        if (achievment.getAchievment().equals("1")) {
+                            rdAchevementYes.setChecked(true);
+                            rdAchevementNo.setChecked(false);
+                        } else {
+                            rdAchevementYes.setChecked(false);
+                            rdAchevementNo.setChecked(true);
+                        }
+
+                    }
                 }
 
+
             }
-        });
+                                             }
+
+        );
 
         FragmentTransaction t = getFragmentManager().beginTransaction();
         t.replace(R.id.evaluation_statistic_calendar, calendarFragment);
         t.commit();
+        }
+
+    private void refreshCalendarView() {
+        Map<String, Object> achievmentMap = evaluationService.getAchievmentMap(evaluationItem.getId());
+        Map<String, Object> extraData = calendarFragment.getExtraData();
+        extraData.put(EvaluationStatisticCalendarAdapter.ACHIEVMENT_LIST, achievmentMap);
+
+        calendarFragment.refreshView();
+
+        float currentProgress = evaluationService.calculateCurrentProgress(evaluationItem.getId(), evaluationItem.getTarget());
+        String subtitle = new StringBuilder()
+                .append(getContext().getResources().getString(R.string.progress))
+                .append(": ").append(currentProgress).append("%").toString();
+        ((Toolbar) parentFragment.getView().findViewById(R.id.evaluation_detail_toolbar)).setSubtitle(subtitle);
     }
 }

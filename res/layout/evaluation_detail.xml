@@ -18,7 +18,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/actionbar_background"
-            app:tabTextColor="@color/white"
+            app:tabTextColor="@color/white_disabled"
+            app:tabSelectedTextColor="@color/white"
             android:elevation="6dp"
             android:minHeight="48dp" />
 

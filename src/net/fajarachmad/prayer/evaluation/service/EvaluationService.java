@@ -55,6 +55,28 @@ public class EvaluationService {
         }
     }
 
+    public void delete(Achievment data) {
+        String documentId = data.getEvaluationId()+ACHIEVMENT_FILE_NAME;
+        String fileContent = readFileContent(documentId);
+        AchievmentData dataObj = gson.fromJson(fileContent, AchievmentData.class);
+
+        if (dataObj == null) {
+            dataObj = new AchievmentData();
+            dataObj.setEvaluationId(data.getEvaluationId());
+            dataObj.setAchievments(new ArrayList<Achievment>());
+        }
+
+        for (Achievment item : dataObj.getAchievments()) {
+            if (item.getId().equals(data.getId())) {
+                dataObj.getAchievments().remove(item);
+                break;
+            }
+        }
+
+        String dataStr = gson.toJson(dataObj);
+        writeDataToFile(documentId, dataStr);
+    }
+
     public void save(Achievment data) {
         String documentId = data.getEvaluationId()+ACHIEVMENT_FILE_NAME;
         String fileContent = readFileContent(documentId);
@@ -158,6 +180,12 @@ public class EvaluationService {
             }
         }
 
+        //delete reminders
+        context.deleteFile(evaluationItemId+EVALUATION_FILE_NAME);
+
+        //delete achievement;
+        context.deleteFile(evaluationItemId+ACHIEVMENT_FILE_NAME);
+
         String dataStr = gson.toJson(dataObj);
         writeDataToFile(EVALUATION_FILE_NAME, dataStr);
     }
@@ -188,11 +216,10 @@ public class EvaluationService {
 
         if (fileContent != null) {
             EvaluationData data = gson.fromJson(fileContent, EvaluationData.class);
-
+            SimpleDateFormat format = new SimpleDateFormat("E, MMM d yyyy", context.getResources().getConfiguration().locale);
             for (EvaluationItem item: data.getEvaluationItems()) {
-                EvaluationItemWrapper wrapper = new EvaluationItemWrapper(item.getId(), item.getGoalName(),null, item.getEndDate() != null ? dateFormatter.format(item.getEndDate()) : "");
+                EvaluationItemWrapper wrapper = new EvaluationItemWrapper(item.getId(), item.getGoalName(),null, item.getStartDate() != null ? format.format(item.getStartDate()) : "");
                 wrapper.setStartDate(item.getStartDate());
-                wrapper.setEndDate(item.getEndDate());
                 wrapper.setTargetUnit(item.getTargetUnit());
                 wrapper.setTarget(item.getTarget());
                 wrapper.setEntryType(item.getEntryType());

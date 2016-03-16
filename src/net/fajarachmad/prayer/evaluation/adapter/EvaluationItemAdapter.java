@@ -46,7 +46,7 @@ public class EvaluationItemAdapter extends RecyclerView.Adapter<EvaluationItemAd
 
         evaluationItemViewHolder.goalName.setText(evaluationItem.getGoalName());
         evaluationItemViewHolder.progress.setText(evaluationItem.getProgressString());
-        evaluationItemViewHolder.dueDate.setText(evaluationItem.getDueDateString());
+        evaluationItemViewHolder.dueDate.setText(evaluationItem.getStartDateStr());
 
         if ((i+1) != evaluationItems.size()) {
             evaluationItemViewHolder.space.setVisibility(View.GONE);

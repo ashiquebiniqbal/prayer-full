@@ -12,6 +12,7 @@ public class Achievment {
     private Date date;
     private String achievment;
     private String targentUnit;
+    private String entryType;
 
     public String getId() {
         return id;
@@ -51,5 +52,13 @@ public class Achievment {
 
     public void setAchievment(String achievment) {
         this.achievment = achievment;
+    }
+
+    public String getEntryType() {
+        return entryType;
+    }
+
+    public void setEntryType(String entryType) {
+        this.entryType = entryType;
     }
 }

@@ -76,6 +76,7 @@
     <string name="add_new_evaluation_reminder">New Reminder</string>
     <string name="progress">Progress</string>
     <string name="new_goal">New Goal</string>
+    <string name="edit_goal">Edit Goal</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="set">Set</string>
@@ -87,4 +88,7 @@
     <string name="degrees">50&#xb0;</string>
     <string name="no_network_alert">No network available</string>
     <string name="gps_not_available_alert">Turn On Location Service to allow Apps to determine your location</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="remove">Remove</string>
 </resources>

@@ -8,7 +8,6 @@
     <include layout="@layout/common_toolbar" />
 
     <ScrollView
-
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -18,10 +17,83 @@
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal">
 
+            <LinearLayout
+                android:id="@+id/evaluation_entry_headerentry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_alignParentTop="true"
+                android:paddingLeft="10dp"
+                android:background="@color/actionbar_background">
+
+                <TextView
+                    android:id="@+id/evaluation_entry_lbl_goalname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:text="Goal Name:"
+                    android:textSize="12sp"
+                    android:textColor="@color/white_semi_transparent"/>
+
+                <EditText
+                    android:id="@+id/evalluation_entry_txt_goalname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:inputType="text"
+                    android:textSize="30sp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white_semi_transparent"/>
+
+                <TextView
+                    android:id="@+id/evalluation_entry_example_goalname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="10sp"
+                    android:paddingLeft="10dp"
+                    android:textColor="@color/white_disabled"
+                    android:text="Example: Recite holy quran"
+                    android:textStyle="italic"/>
+
+                <TextView
+                    android:id="@+id/evaluation_entry_lbl_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Entry Type:"
+                    android:paddingTop="10dp"
+                    android:textSize="12sp"
+                    android:textColor="@color/white_semi_transparent"/>
+
+                <RadioGroup
+                    android:id="@+id/evalluation_entry_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <RadioButton
+                        android:id="@+id/evaluation_entry_type_yesno"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Yes/No"
+                        android:textColor="@color/white"/>
+
+                    <RadioButton
+                        android:id="@+id/evaluation_entry_type_free"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Free Text"
+                        android:checked="true"
+                        android:textColor="@color/white"/>
+                </RadioGroup>
+
+
+            </LinearLayout>
+
             <android.support.v7.widget.CardView
                 android:id="@+id/evaluation_entry_goalinfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/evaluation_entry_headerentry"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp">
 
@@ -30,58 +102,15 @@
                     android:layout_height="wrap_content" >
 
                     <TextView
-                        android:id="@+id/evaluation_entry_lbl_goalname"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:text="Goal Name:"
-                        android:padding="5dp"/>
-
-                    <EditText
-                        android:id="@+id/evalluation_entry_txt_goalname"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/evaluation_entry_lbl_goalname"
-                        android:paddingTop="5dp"
-                        android:inputType="text"
-                        android:hint="Read Quran"/>
-
-                    <TextView
-                        android:id="@+id/evaluation_entry_lbl_type"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Entry Type:"
-                        android:padding="5dp"
-                        android:layout_below="@id/evalluation_entry_txt_goalname"/>
-
-                    <RadioGroup
-                        android:id="@+id/evalluation_entry_type"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_below="@id/evaluation_entry_lbl_type">
-
-                        <RadioButton
-                            android:id="@+id/evaluation_entry_type_yesno"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Yes/No"  />
-
-                        <RadioButton
-                            android:id="@+id/evaluation_entry_type_free"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Free Text"
-                            android:checked="true"/>
-
-                    </RadioGroup>
-                    <TextView
                         android:id="@+id/evaluation_entry_lbl_target"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/evalluation_entry_type"
+                        android:layout_alignParentTop="true"
                         android:text="Target:"
-                        android:padding="5dp"/>
+                        android:paddingTop="5dp"
+                        android:paddingLeft="10dp"
+                        android:textSize="12sp"
+                        android:textColor="@color/black_semi_transparent"/>
 
                     <LinearLayout
                         android:id="@+id/evalluation_entry_target"
@@ -89,40 +118,54 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_below="@id/evaluation_entry_lbl_target"
-                        android:padding="5dp"
+                        android:paddingLeft="10dp"
                         android:weightSum="100">
 
                         <EditText
                             android:id="@+id/evalluation_entry_txt_target"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="25"
-                            android:inputType="number"
-                            android:hint="2"/>
+                            android:layout_weight="30"
+                            android:hint="1"
+                            android:inputType="number"/>
 
                         <EditText
                             android:id="@+id/evalluation_entry_txt_targetunit"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="35"
-                            android:inputType="text"
-                            android:hint="Juz"/>
+                            android:hint="Juz"
+                            android:inputType="text"/>
 
                         <Spinner
                             android:id="@+id/evalluation_entry_txt_frequency"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="40"
+                            android:layout_weight="35"
                             android:entries="@array/evaluationFrequency"/>
                     </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/evalluation_entry_example_evaluation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/evalluation_entry_target"
+                        android:textSize="10sp"
+                        android:paddingLeft="10dp"
+                        android:textColor="@color/black_disabled"
+                        android:text="Example: 1 Juz Per Day"
+                        android:textStyle="italic"/>
 
                     <TextView
                         android:id="@+id/evaluation_entry_lbl_enddate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/evalluation_entry_target"
-                        android:text="End Date:"
-                        android:padding="5dp"/>
+                        android:layout_below="@id/evalluation_entry_example_evaluation"
+                        android:text="Start Date:"
+                        android:paddingTop="10dp"
+                        android:paddingLeft="10dp"
+                        android:textSize="12sp"
+                        android:textColor="@color/black_semi_transparent"/>
 
                     <EditText
                         android:id="@+id/evaluation_entry_enddate"
@@ -130,10 +173,13 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/evaluation_entry_lbl_enddate"
                         android:inputType="none"
-                        android:hint="19-01-2016"/>
+                        android:clickable="true"
+                        android:editable="false"
+                        android:paddingLeft="10dp"/>
                 </RelativeLayout>
+
             </android.support.v7.widget.CardView>
+
         </RelativeLayout>
     </ScrollView>
-
 </LinearLayout>
