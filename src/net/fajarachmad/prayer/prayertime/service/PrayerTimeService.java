@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import net.fajarachmad.prayer.activity.MainActivity;
 import net.fajarachmad.prayer.R;
@@ -76,7 +77,7 @@ public class PrayerTimeService extends IntentService implements AppConstant {
 	    Locale.setDefault(locale);
 	    Configuration config = new Configuration();
 	    config.locale = locale;
-	    getApplicationContext().getResources().updateConfiguration(config,getApplicationContext().getResources().getDisplayMetrics());
+	    getApplicationContext().getResources().updateConfiguration(config, getApplicationContext().getResources().getDisplayMetrics());
 	}
 	
 	@Override
@@ -139,7 +140,7 @@ public class PrayerTimeService extends IntentService implements AppConstant {
 	
 	private void playAlarmSound(Intent intent) {
 		String sound = intent.getStringExtra(NOTIFICATION_SOUND);
-		Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+ "://" + getPackageName() + "/raw/"+sound);
+		Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getPackageName() + "/raw/" + sound);
 		mediaPlayer = MediaPlayer.create(getApplicationContext(), alarmSound);
 		mediaPlayer.start();
 	}
@@ -165,7 +166,7 @@ public class PrayerTimeService extends IntentService implements AppConstant {
 			} else {
 				currentLocation = newLocation;
 			}
-			
+			getCurrentTimezone();
 			prayer.getLocation().setTimezone(getTimezone());
 
 			prayer.setLocation(currentLocation);
@@ -184,6 +185,10 @@ public class PrayerTimeService extends IntentService implements AppConstant {
 	    ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 	    return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+	}
+
+	private void getCurrentTimezone() {
+		String timezome = TimeZone.getDefault().getID();
 	}
 	
 	private int getTimezone() {
@@ -245,8 +250,6 @@ public class PrayerTimeService extends IntentService implements AppConstant {
 				location.setLatitude(latitude);
 				location.setLongitude(longitude);
 
-			} else {
-				gpsTracker.showSettingsAlert();
 			}
 		}
 		

@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.gson.Gson;
@@ -107,7 +108,9 @@ public class PrayerTimeFragment extends AbstractPrayerFragment {
 	private ScreenSlidePagerAdapter mPagerAdapter;
 	private int currentViewPagerPage = 0;
 	private int numViewPagerPages = 1;
-	
+	private ProgressBar progressBar;
+	private RecyclerView mRecyclerView;
+
 	public static PrayerTimeFragment getInstance() {
 		return fragment;
 	}
@@ -129,11 +132,12 @@ public class PrayerTimeFragment extends AbstractPrayerFragment {
         setLocale();
         stopAlarmSound();
 		closeNotification();
-		
+		progressBar = (ProgressBar) rootView.findViewById(R.id.prayertime_progressbar);
+
 		initViewPager(rootView);
         
         setActionButtonListener(rootView);
-        
+
 		String prayerJson = sharedPrefs.getString(Prayer.class.getName(), gson.toJson(new Prayer()));
 		prayer = gson.fromJson(prayerJson, Prayer.class);
 		
@@ -154,8 +158,20 @@ public class PrayerTimeFragment extends AbstractPrayerFragment {
 		((MainActivity)getActivity()).setActivityTitle(getActivity().getResources().getString(R.string.title_prayer_time));
 		
 		newLocation = null;
+
+		showProgress();
 		return rootView;
     }
+
+	private void showProgress() {
+		progressBar.setVisibility(View.VISIBLE);
+		mRecyclerView.setVisibility(View.GONE);
+	}
+
+	private void hideProgress() {
+		progressBar.setVisibility(View.GONE);
+		mRecyclerView.setVisibility(View.VISIBLE);
+	}
 	
 	private void initViewPager(View rootView) {
 		// Instantiate a ViewPager and a PagerAdapter.
@@ -279,7 +295,7 @@ public class PrayerTimeFragment extends AbstractPrayerFragment {
 	}
 	
 	private void populatePrayerItemList(View rootView) {
-		RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.prayer_item_rv);
+		mRecyclerView = (RecyclerView) rootView.findViewById(R.id.prayer_item_rv);
 		mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         PrayerItemAdapter mAdapter = new PrayerItemAdapter(this, prayerItems);
         mRecyclerView.setAdapter(mAdapter);
@@ -392,6 +408,7 @@ public class PrayerTimeFragment extends AbstractPrayerFragment {
 	
 	
     public void renderPrayerValue(Prayer prayer) {
+		hideProgress();
 		if (getView() != null) {
 			this.prayer = prayer; 
 			setLocationInformation(getView());
