@@ -1,5 +1,6 @@
 package net.fajarachmad.prayer.evaluation.fragment;
 
+import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -26,11 +27,13 @@ import net.fajarachmad.prayer.common.adapter.CommonPopupListviewAdapter;
 import net.fajarachmad.prayer.common.adapter.CommonPopupListviewDelegate;
 import net.fajarachmad.prayer.common.fragment.AbstractPrayerFragment;
 import net.fajarachmad.prayer.common.util.IDGenerator;
+import net.fajarachmad.prayer.common.util.StringUtil;
 import net.fajarachmad.prayer.common.view.CheckableImageButton;
 import net.fajarachmad.prayer.common.wrapper.KeyValue;
 import net.fajarachmad.prayer.evaluation.service.EvaluationService;
 import net.fajarachmad.prayer.evaluation.wrapper.EvaluationItemWrapper;
 import net.fajarachmad.prayer.evaluation.wrapper.Reminder;
+import net.fajarachmad.prayer.evaluation.wrapper.ReminderItemWrapper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -66,6 +69,8 @@ public class EvaluationReminderEntryFragment extends AbstractPrayerFragment {
     private RingtoneManager ringtoneManager;
     private Gson gson;
     private Reminder data;
+    private ReminderItemWrapper currentData;
+    private Dialog dialog;
 
     public static EvaluationReminderEntryFragment newInstance(EvaluationItemWrapper evaluationItem) {
         EvaluationReminderEntryFragment f = new EvaluationReminderEntryFragment();
@@ -84,6 +89,9 @@ public class EvaluationReminderEntryFragment extends AbstractPrayerFragment {
         context = getContext();
         gson = new Gson();
         evaluationItem = gson.fromJson(getArguments().getString(EvaluationItemWrapper.class.getName()), EvaluationItemWrapper.class);
+        if (getArguments() != null) {
+            currentData = gson.fromJson(getArguments().getString(ReminderItemWrapper.class.getName()), ReminderItemWrapper.class);
+        }
     }
 
     @Nullable
@@ -92,7 +100,13 @@ public class EvaluationReminderEntryFragment extends AbstractPrayerFragment {
         View rootView = inflater.inflate(R.layout.evaluation_reminder_entry, container, false);
         setupInputElement(rootView);
         populateRingtoneList();
-        setCustomToolbar(rootView, getActivity().getResources().getString(R.string.add_new_evaluation_reminder));
+        String title = null;
+        if (currentData == null) {
+            title = getActivity().getResources().getString(R.string.add_new_evaluation_reminder);
+        } else {
+            title = getActivity().getResources().getString(R.string.edit_evaluation_reminder);
+        }
+        setCustomToolbar(rootView, title);
         setupTimePickerDialog(rootView);
         setOnClickListenerTxtSound(rootView);
         setOnClickBtnSave();
@@ -207,11 +221,36 @@ public class EvaluationReminderEntryFragment extends AbstractPrayerFragment {
         btnThu = (CheckableImageButton) view.findViewById(R.id.evaluation_reminder_entry_btn_thu);
         btnFri = (CheckableImageButton) view.findViewById(R.id.evaluation_reminder_entry_btn_fri);
         btnSat = (CheckableImageButton) view.findViewById(R.id.evaluation_reminder_entry_btn_sat);
+
+        //default value
+        btnMon.setChecked(true);
+        btnTue.setChecked(true);
+        btnWed.setChecked(true);
+        btnThu.setChecked(true);
+        btnFri.setChecked(true);
+
+        if (currentData != null) {
+            txtMessage.setText(currentData.getMessage());
+            txtTime.setText(currentData.getTime());
+            txtTone.setText(currentData.getTone());
+            btnSun.setChecked(currentData.isRepeatSun());
+            btnMon.setChecked(currentData.isRepeatMon());
+            btnTue.setChecked(currentData.isRepeatTue());
+            btnWed.setChecked(currentData.isRepeatWed());
+            btnThu.setChecked(currentData.isRepeatThu());
+            btnFri.setChecked(currentData.isRepeatFri());
+            btnSat.setChecked(currentData.isRepeatSat());
+            if (!StringUtil.isBlank(currentData.getTone())) {
+                selectedTone = new KeyValue(currentData.getToneURI(), currentData.getTone());
+            }
+        }
+
     }
 
     private void convertElementToObject() {
-        if (data == null) {
-            data = new Reminder();
+        data = new Reminder();
+        if (currentData != null) {
+            data.setId(currentData.getId());
         }
 
         String message = txtMessage.getText() != null ? txtMessage.getText().toString() : null;
@@ -232,20 +271,61 @@ public class EvaluationReminderEntryFragment extends AbstractPrayerFragment {
     }
 
     private void setOnClickBtnSave() {
-        toolbar.inflateMenu(R.menu.entry_menu);
+        toolbar.inflateMenu(R.menu.entry_menu_withdelete);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
 
-                if (item.getItemId() == R.id.action_save) {
-                    convertElementToObject();
-                    evaluationService.save(data);
-                    getFragmentManager().popBackStack();
-                }
+                switch (item.getItemId()) {
+                    case R.id.action_save:
+                        if (validate()) {
+                            convertElementToObject();
+                            evaluationService.save(data);
+                            getFragmentManager().popBackStack();
+                        }
+                        break;
 
+                    case R.id.action_delete:
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setTitle("Confirmation");
+                        builder.setMessage("Are you sure want to delete this reminder ?");
+                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                evaluationService.delete(currentData.getEvaluationId(), currentData.getId());
+                                getFragmentManager().popBackStack();
+                                dialog.hide();
+                            }
+                        });
+                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                getFragmentManager().popBackStack();
+                                dialog.hide();
+                            }
+                        });
+                        dialog = builder.show();
+                        break;
+                }
                 return false;
             }
         });
+    }
+
+    private boolean validate() {
+        boolean isValid = true;
+
+        if (StringUtil.isBlank(txtMessage.getText().toString())) {
+            isValid = false;
+            txtMessage.setError("Reminder message should not be empty");
+        }
+
+        if (StringUtil.isBlank(txtTime.getText().toString())) {
+            isValid = false;
+            txtTime.setError("Reminder time should not be empty");
+        }
+
+        return isValid;
     }
 
 

@@ -127,7 +127,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="30"
                             android:hint="1"
-                            android:inputType="number"/>
+                            android:inputType="number"
+                            android:textColorHint="@color/black_disabled"/>
 
                         <EditText
                             android:id="@+id/evalluation_entry_txt_targetunit"
@@ -135,7 +136,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="35"
                             android:hint="Juz"
-                            android:inputType="text"/>
+                            android:inputType="text"
+                            android:textColorHint="@color/black_disabled"/>
 
                         <Spinner
                             android:id="@+id/evalluation_entry_txt_frequency"

@@ -8,6 +8,8 @@ public class ReminderItemWrapper {
     private String evaluationId;
     private String message;
     private String time;
+    private String tone;
+    private String toneURI;
     private boolean soundEnable;
     private boolean repeatSun;
     private boolean repeatMon;
@@ -47,6 +49,22 @@ public class ReminderItemWrapper {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public String getTone() {
+        return tone;
+    }
+
+    public void setTone(String tone) {
+        this.tone = tone;
+    }
+
+    public String getToneURI() {
+        return toneURI;
+    }
+
+    public void setToneURI(String toneURI) {
+        this.toneURI = toneURI;
     }
 
     public boolean isSoundEnable() {

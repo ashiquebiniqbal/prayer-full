@@ -118,11 +118,38 @@ public class EvaluationService {
 
         if (data.getId() == null) {
             data.setId(idGenerator.generate());
+            dataObj.getReminders().add(data);
+        } else {
+            for (Reminder reminder : dataObj.getReminders() ) {
+                if (reminder.getId().equals(data.getId())) {
+                    dataObj.getReminders().remove(reminder);
+                    break;
+                }
+            }
+            dataObj.getReminders().add(data);
         }
 
+        String dataStr = gson.toJson(dataObj);
+        writeDataToFile(documentId, dataStr);
+    }
 
+    public void delete(String evaluationId, String reminderId) {
+        String documentId = evaluationId+REMINDER_FILE_NAME;
+        String fileContent = readFileContent(documentId);
+        ReminderData dataObj = gson.fromJson(fileContent, ReminderData.class);
 
-        dataObj.getReminders().add(data);
+        if (dataObj == null) {
+            dataObj = new ReminderData();
+            dataObj.setEvaluationId(evaluationId);
+            dataObj.setReminders(new ArrayList<Reminder>());
+        }
+
+        for (Reminder reminder : dataObj.getReminders() ) {
+            if (reminder.getId().equals(reminderId)) {
+                dataObj.getReminders().remove(reminder);
+                break;
+            }
+        }
 
         String dataStr = gson.toJson(dataObj);
         writeDataToFile(documentId, dataStr);
@@ -305,6 +332,8 @@ public class EvaluationService {
                 wrapper.setEvaluationId(reminder.getEvaluationId());
                 wrapper.setMessage(reminder.getMessage());
                 wrapper.setTime(reminder.getTime());
+                wrapper.setTone(reminder.getTone());
+                wrapper.setToneURI(reminder.getToneUri());
                 wrapper.setSoundEnable(reminder.getTone() != null ? true : false);
                 wrapper.setRepeatSun(reminder.isRepeatSun());
                 wrapper.setRepeatMon(reminder.isRepeatMon());

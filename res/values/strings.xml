@@ -74,6 +74,7 @@
     <string name="reminder_tone_hint">Reminder tone</string>
     <string name="save_label">Save</string>
     <string name="add_new_evaluation_reminder">New Reminder</string>
+    <string name="edit_evaluation_reminder">Edit Reminder</string>
     <string name="progress">Progress</string>
     <string name="new_goal">New Goal</string>
     <string name="edit_goal">Edit Goal</string>

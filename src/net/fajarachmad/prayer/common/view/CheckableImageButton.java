@@ -59,4 +59,13 @@ public class CheckableImageButton extends ImageButton{
     public boolean isChecked() {
         return this.checked;
     }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+        if (checked) {
+            setImageDrawable(onCheckedDrawable);
+        } else {
+            setImageDrawable(onUncheckedDrawable);
+        }
+    }
 }

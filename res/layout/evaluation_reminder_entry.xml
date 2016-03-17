@@ -40,7 +40,7 @@
                         android:padding="5dp"
                         android:paddingBottom="15dp"
                         android:hint="@string/reminder_message_hint"
-                        android:drawableLeft="@drawable/prayer_message_icon"
+                        android:drawableLeft="@drawable/ic_message_black"
                         android:drawablePadding="15dp"/>
 
                     <EditText
@@ -54,7 +54,7 @@
                         android:padding="5dp"
                         android:paddingBottom="15dp"
                         android:hint="@string/reminder_time_hint"
-                        android:drawableLeft="@drawable/prayer_time_icon"
+                        android:drawableLeft="@drawable/ic_access_time_black"
                         android:drawablePadding="15dp"/>
 
                     <EditText

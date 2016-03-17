@@ -43,6 +43,8 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.telephony.TelephonyManager;
+import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -57,7 +59,7 @@ public class PrayerTimeService extends IntentService implements AppConstant {
 	
 	private Prayer prayer;
 	private Gson gson;
-	
+
 	public PrayerTimeService() {
 		super("PrayerTimeService");
 	}
@@ -102,6 +104,9 @@ public class PrayerTimeService extends IntentService implements AppConstant {
 			break;
 		}
 		
+	}
+
+	private void getLocationByCell() {
 	}
 	
 	private void reloadPrayerTime(Intent intent) {
@@ -241,12 +246,6 @@ public class PrayerTimeService extends IntentService implements AppConstant {
 					location.setPostalCode(postalCode);
 					location.setCountry(country);
 				}
-
-				Log.i("Prayer", "Latitude: " + latitude);
-				Log.i("Prayer", "Longitude: " + longitude);
-				Log.i("Prayer", "Country: " + country);
-				Log.i("Prayer", "City: " + city);
-
 				location.setLatitude(latitude);
 				location.setLongitude(longitude);
 
