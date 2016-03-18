@@ -26,6 +26,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
@@ -39,8 +40,10 @@ import net.fajarachmad.prayer.common.util.GooglePlaceUtil;
 import org.apache.http.client.methods.HttpGet;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static net.fajarachmad.prayer.common.constant.AppConstant.API_KEY;
 import static net.fajarachmad.prayer.common.constant.AppConstant.DEFAULT_LANGUAGE;
@@ -59,6 +62,7 @@ public class MosqueFinderFragment extends AbstractPrayerFragment {
     private Geocoder geocoder;
     private GooglePlaceAdapter mArrayAdapter;
     private ListView mListView;
+    private Map<String, Object> markerMap = new HashMap<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -180,7 +184,8 @@ public class MosqueFinderFragment extends AbstractPrayerFragment {
             markerOptions.position(new LatLng(googlePlace.getGeometry().getLocation().getLat(), googlePlace.getGeometry().getLocation().getLng()));
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
             markerOptions.title(googlePlace.getName());
-            googleMap.addMarker(markerOptions);
+            Marker marker = googleMap.addMarker(markerOptions);
+            markerMap.put(googlePlace.getId(), marker);
         }
 
     }
@@ -217,13 +222,19 @@ public class MosqueFinderFragment extends AbstractPrayerFragment {
                 LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 view = vi.inflate(R.layout.prayertime_mosquefinder_item, null);
             }
-            GooglePlace location = locations.get(position);
+            final GooglePlace location = locations.get(position);
             if (location != null) {
                 ((TextView) view.findViewById(R.id.mosque_name)).setText(location.getName());
                 ((TextView) view.findViewById(R.id.mosque_address_line)).setText(location.getVicinity());
                 ImageView imageView = (ImageView)view.findViewById(R.id.mosque_icon);
                 imageView.setImageDrawable(getContext().getResources().getDrawable(R.drawable.prayer_mosque));
-
+                view.findViewById(R.id.mosque_finder_layout).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Marker marker = (Marker) markerMap.get(location.getId());
+                        marker.showInfoWindow();
+                    }
+                });
             }
             return view;
         }

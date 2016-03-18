@@ -12,6 +12,7 @@ Licensed under the MIT License (see LICENSE.txt)
     <declare-styleable name="CheckableImageButton">
         <attr name="onCheckedSrc" format="enum" />
         <attr name="onUncheckedSrc" format="enum" />
+        <attr name="name" format="string" />
     </declare-styleable>
 
 </resources>

@@ -37,7 +37,7 @@ public class EvaluationTabPagerAdapter extends FragmentStatePagerAdapter {
                 fragment = EvaluationStatisticFragment.newInstance(evaluationItem);
                 break;
             case 1:
-                fragment = new EvaluationReminderFragment(evaluationItem);
+                fragment = EvaluationReminderFragment.newInstance(evaluationItem);
                 break;
         }
 

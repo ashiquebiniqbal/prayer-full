@@ -35,6 +35,8 @@ import net.fajarachmad.prayer.evaluation.wrapper.EvaluationItemWrapper;
 import net.fajarachmad.prayer.evaluation.wrapper.Reminder;
 import net.fajarachmad.prayer.evaluation.wrapper.ReminderItemWrapper;
 
+import java.sql.Time;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -88,8 +90,8 @@ public class EvaluationReminderEntryFragment extends AbstractPrayerFragment {
         evaluationService = EvaluationService.getInstance(getContext());
         context = getContext();
         gson = new Gson();
-        evaluationItem = gson.fromJson(getArguments().getString(EvaluationItemWrapper.class.getName()), EvaluationItemWrapper.class);
         if (getArguments() != null) {
+            evaluationItem = gson.fromJson(getArguments().getString(EvaluationItemWrapper.class.getName()), EvaluationItemWrapper.class);
             currentData = gson.fromJson(getArguments().getString(ReminderItemWrapper.class.getName()), ReminderItemWrapper.class);
         }
     }
@@ -185,8 +187,21 @@ public class EvaluationReminderEntryFragment extends AbstractPrayerFragment {
 
     private void setupTimePickerDialog(final View view) {
         final Calendar c = Calendar.getInstance();
+        if (currentData != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+
+            Time time = null;
+            try {
+                time = new Time(sdf.parse(currentData.getTime()).getTime());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            c.setTimeInMillis(time.getTime());
+        }
+
         final int hour = c.get(Calendar.HOUR_OF_DAY);
         final int minute = c.get(Calendar.MINUTE);
+
         final TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
@@ -271,7 +286,12 @@ public class EvaluationReminderEntryFragment extends AbstractPrayerFragment {
     }
 
     private void setOnClickBtnSave() {
-        toolbar.inflateMenu(R.menu.entry_menu_withdelete);
+        if (currentData != null) {
+            toolbar.inflateMenu(R.menu.entry_menu_withdelete);
+        } else {
+            toolbar.inflateMenu(R.menu.entry_menu);
+        }
+
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {

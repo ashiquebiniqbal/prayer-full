@@ -15,6 +15,7 @@ import net.fajarachmad.prayer.R;
 import net.fajarachmad.prayer.common.fragment.AbstractPrayerFragment;
 import net.fajarachmad.prayer.evaluation.adapter.EvaluationReminderItemAdapter;
 import net.fajarachmad.prayer.evaluation.service.EvaluationService;
+import net.fajarachmad.prayer.evaluation.wrapper.EvaluationItem;
 import net.fajarachmad.prayer.evaluation.wrapper.EvaluationItemWrapper;
 import net.fajarachmad.prayer.evaluation.wrapper.ReminderItemWrapper;
 
@@ -32,12 +33,17 @@ public class EvaluationReminderFragment extends AbstractPrayerFragment {
     private Gson gson;
     private EvaluationService evaluationService;
 
+
     public EvaluationReminderFragment(){}
 
-    public EvaluationReminderFragment(EvaluationItemWrapper evaluationItem) {
-        this.evaluationItem = evaluationItem;
+    public static EvaluationReminderFragment newInstance(EvaluationItemWrapper evaluationItem) {
+        EvaluationReminderFragment f = new EvaluationReminderFragment();
+        Gson gson = new Gson();
+        Bundle bundle = new Bundle();
+        bundle.putString(EvaluationItemWrapper.class.getName(), gson.toJson(evaluationItem));
+        f.setArguments(bundle);
+        return f;
     }
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,6 +51,9 @@ public class EvaluationReminderFragment extends AbstractPrayerFragment {
         fragment = this;
         gson = new Gson();
         evaluationService = EvaluationService.getInstance(getContext());
+        if (getArguments() != null) {
+            evaluationItem = gson.fromJson(getArguments().getString(EvaluationItemWrapper.class.getName()), EvaluationItemWrapper.class);
+        }
     }
 
     @Nullable
@@ -74,7 +83,7 @@ public class EvaluationReminderFragment extends AbstractPrayerFragment {
         initEvaluationReminderData();
         RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.evaluation_reminder_rv);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        EvaluationReminderItemAdapter mAdapter = new EvaluationReminderItemAdapter(this, reminderItems);
+        EvaluationReminderItemAdapter mAdapter = new EvaluationReminderItemAdapter(this, reminderItems, evaluationItem);
         mRecyclerView.setAdapter(mAdapter);
     }
 

@@ -93,6 +93,7 @@
                             android:background="@null"
                             android:src="@drawable/prayer_day_icon_s_unchecked"
                             android:padding="5dp"
+                            prayer:name="@string/sunday"
                             prayer:onCheckedSrc="@drawable/prayer_day_icon_s_checked"
                             prayer:onUncheckedSrc="@drawable/prayer_day_icon_s_unchecked"/>
                         <net.fajarachmad.prayer.common.view.CheckableImageButton
@@ -102,6 +103,7 @@
                             android:background="@null"
                             android:src="@drawable/prayer_day_icon_m_unchecked"
                             android:padding="5dp"
+                            prayer:name="@string/monday"
                             prayer:onCheckedSrc="@drawable/prayer_day_icon_m_checked"
                             prayer:onUncheckedSrc="@drawable/prayer_day_icon_m_unchecked"/>
                         <net.fajarachmad.prayer.common.view.CheckableImageButton
@@ -111,6 +113,7 @@
                             android:background="@null"
                             android:src="@drawable/prayer_day_icon_t_unchecked"
                             android:padding="5dp"
+                            prayer:name="@string/tuesday"
                             prayer:onCheckedSrc="@drawable/prayer_day_icon_t_checked"
                             prayer:onUncheckedSrc="@drawable/prayer_day_icon_t_unchecked"/>
                         <net.fajarachmad.prayer.common.view.CheckableImageButton
@@ -120,6 +123,7 @@
                             android:background="@null"
                             android:src="@drawable/prayer_day_icon_w_unchecked"
                             android:padding="5dp"
+                            prayer:name="@string/wednesday"
                             prayer:onCheckedSrc="@drawable/prayer_day_icon_w_checked"
                             prayer:onUncheckedSrc="@drawable/prayer_day_icon_w_unchecked"/>
                         <net.fajarachmad.prayer.common.view.CheckableImageButton
@@ -129,6 +133,7 @@
                             android:background="@null"
                             android:src="@drawable/prayer_day_icon_t_unchecked"
                             android:padding="5dp"
+                            prayer:name="@string/thursday"
                             prayer:onCheckedSrc="@drawable/prayer_day_icon_t_checked"
                             prayer:onUncheckedSrc="@drawable/prayer_day_icon_t_unchecked"/>
                         <net.fajarachmad.prayer.common.view.CheckableImageButton
@@ -138,6 +143,7 @@
                             android:background="@null"
                             android:src="@drawable/prayer_day_icon_f_unchecked"
                             android:padding="5dp"
+                            prayer:name="@string/friday"
                             prayer:onCheckedSrc="@drawable/prayer_day_icon_f_checked"
                             prayer:onUncheckedSrc="@drawable/prayer_day_icon_f_unchecked"/>
                         <net.fajarachmad.prayer.common.view.CheckableImageButton
@@ -147,6 +153,7 @@
                             android:background="@null"
                             android:src="@drawable/prayer_day_icon_s_unchecked"
                             android:padding="5dp"
+                            prayer:name="@string/saturday"
                             prayer:onCheckedSrc="@drawable/prayer_day_icon_s_checked"
                             prayer:onUncheckedSrc="@drawable/prayer_day_icon_s_unchecked"/>
                     </LinearLayout>

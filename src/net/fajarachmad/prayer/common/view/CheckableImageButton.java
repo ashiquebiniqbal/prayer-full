@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import net.fajarachmad.prayer.R;
 
@@ -18,6 +19,7 @@ public class CheckableImageButton extends ImageButton{
     private boolean checked;
     private Drawable onCheckedDrawable;
     private Drawable onUncheckedDrawable;
+    private String name;
 
     public CheckableImageButton(Context context) {
         super(context);
@@ -29,6 +31,7 @@ public class CheckableImageButton extends ImageButton{
         try {
             onCheckedDrawable = ta.getDrawable(R.styleable.CheckableImageButton_onCheckedSrc);
             onUncheckedDrawable = ta.getDrawable(R.styleable.CheckableImageButton_onUncheckedSrc);
+            name = ta.getString(R.styleable.CheckableImageButton_name);
         } finally {
             ta.recycle();
         }
@@ -45,6 +48,7 @@ public class CheckableImageButton extends ImageButton{
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                Toast.makeText(getContext(), name, Toast.LENGTH_SHORT).show();
                 if (checked) {
                     setImageDrawable(onUncheckedDrawable);
                     checked = false;

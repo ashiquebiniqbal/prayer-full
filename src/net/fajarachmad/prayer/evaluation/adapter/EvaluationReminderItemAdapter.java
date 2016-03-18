@@ -31,11 +31,13 @@ public class EvaluationReminderItemAdapter extends RecyclerView.Adapter<Evaluati
     private List<ReminderItemWrapper> reminderItems;
     private EvaluationReminderFragment context;
     private Gson gson;
+    private EvaluationItemWrapper evaluationItem;
 
-    public EvaluationReminderItemAdapter(EvaluationReminderFragment context, List<ReminderItemWrapper> reminderItems) {
+    public EvaluationReminderItemAdapter(EvaluationReminderFragment context, List<ReminderItemWrapper> reminderItems, EvaluationItemWrapper evaluationItem) {
         this.reminderItems = reminderItems;
         this.context = context;
         gson = new Gson();
+        this.evaluationItem = evaluationItem;
     }
 
     @Override
@@ -93,6 +95,7 @@ public class EvaluationReminderItemAdapter extends RecyclerView.Adapter<Evaluati
                 Fragment fragment = new EvaluationReminderEntryFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString(ReminderItemWrapper.class.getName(), gson.toJson(reminderItem));
+                bundle.putString(EvaluationItemWrapper.class.getName(), gson.toJson(evaluationItem));
                 fragment.setArguments(bundle);
                 context.getParentFragment().getFragmentManager()
                         .beginTransaction()
