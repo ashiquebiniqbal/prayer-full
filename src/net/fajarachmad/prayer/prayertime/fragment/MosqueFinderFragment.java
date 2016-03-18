@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -196,11 +197,19 @@ public class MosqueFinderFragment extends AbstractPrayerFragment {
         public void onReceive(Context context, Intent intent)
         {
             String response = intent.getStringExtra(AsyncTaskUtil.HTTP_RESPONSE);
-            List<GooglePlace> googlePlaces = GooglePlaceUtil.parseGoogleParse(response);
+            final List<GooglePlace> googlePlaces = GooglePlaceUtil.parseGoogleParse(response);
 
             mArrayAdapter = new GooglePlaceAdapter(getContext(), R.layout.prayertime_mosquefinder_item, R.id.mosque_name, googlePlaces);
             mListView.setAdapter(mArrayAdapter);
             addMapMarker(googlePlaces);
+            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                    GooglePlace location = googlePlaces.get(position);
+                    Marker marker = (Marker) markerMap.get(location.getId());
+                    marker.showInfoWindow();
+                }
+            });
         }
     };
 
@@ -228,13 +237,6 @@ public class MosqueFinderFragment extends AbstractPrayerFragment {
                 ((TextView) view.findViewById(R.id.mosque_address_line)).setText(location.getVicinity());
                 ImageView imageView = (ImageView)view.findViewById(R.id.mosque_icon);
                 imageView.setImageDrawable(getContext().getResources().getDrawable(R.drawable.prayer_mosque));
-                view.findViewById(R.id.mosque_finder_layout).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Marker marker = (Marker) markerMap.get(location.getId());
-                        marker.showInfoWindow();
-                    }
-                });
             }
             return view;
         }

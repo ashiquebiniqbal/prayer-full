@@ -31,6 +31,8 @@ import net.fajarachmad.prayer.evaluation.service.EvaluationService;
 import net.fajarachmad.prayer.evaluation.wrapper.EvaluationItemWrapper;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -44,6 +46,7 @@ public class EvaluationFragment extends AbstractPrayerFragment {
     private  EvaluationItemAdapter mAdapter;
     private Dialog dialog;
     private Gson gson;
+    private RecyclerView mRecyclerView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,7 +93,7 @@ public class EvaluationFragment extends AbstractPrayerFragment {
 
     private void populateEvaluationItemList(View rootView) {
         initEvaluationData();
-        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.evaluation_rv);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.evaluation_rv);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mAdapter = new EvaluationItemAdapter(this, evaluationItems);
         mRecyclerView.setAdapter(mAdapter);
@@ -165,10 +168,25 @@ public class EvaluationFragment extends AbstractPrayerFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case  R.id.action_sort_name:
+            case R.id.action_sort_name:
+                Collections.sort(evaluationItems, new Comparator<EvaluationItemWrapper>() {
+                    @Override
+                    public int compare(EvaluationItemWrapper evaluationItemWrapper, EvaluationItemWrapper t1) {
+                        return evaluationItemWrapper.getGoalName().compareTo(t1.getGoalName());
+                    }
+                });
+                mAdapter = new EvaluationItemAdapter(this, evaluationItems);
+                mRecyclerView.setAdapter(mAdapter);
                 break;
-
             case R.id.action_sort_startdate:
+                Collections.sort(evaluationItems, new Comparator<EvaluationItemWrapper>() {
+                    @Override
+                    public int compare(EvaluationItemWrapper evaluationItemWrapper, EvaluationItemWrapper t1) {
+                        return evaluationItemWrapper.getStartDate().compareTo(t1.getStartDate());
+                    }
+                });
+                mAdapter = new EvaluationItemAdapter(this, evaluationItems);
+                mRecyclerView.setAdapter(mAdapter);
                 break;
         }
 
