@@ -1,8 +1,10 @@
 package net.fajarachmad.prayer.prayertime.fragment;
 
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
@@ -19,7 +21,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.gson.Gson;
@@ -28,7 +32,10 @@ import net.fajarachmad.prayer.R;
 import net.fajarachmad.prayer.activity.MainActivity;
 import net.fajarachmad.prayer.common.adapter.ScreenSlidePagerAdapter;
 import net.fajarachmad.prayer.common.fragment.AbstractPrayerFragment;
+import net.fajarachmad.prayer.common.receiver.PrayerTimeReceiver;
+import net.fajarachmad.prayer.common.service.CallbackListener;
 import net.fajarachmad.prayer.prayertime.adapter.PrayerItemAdapter;
+import net.fajarachmad.prayer.prayertime.service.AsyncPrayerTimeService;
 import net.fajarachmad.prayer.prayertime.service.PrayerTimeService;
 import net.fajarachmad.prayer.prayertime.wrapper.Location;
 import net.fajarachmad.prayer.prayertime.wrapper.Prayer;
@@ -101,7 +108,7 @@ public class PrayerTimeFragment extends AbstractPrayerFragment {
 	private List<String> tuningValues;
 	private List<PrayerItemWrapper> prayerItems;
 	private Gson gson;
-	private Prayer prayer;
+	//private Prayer prayer;
 	private Map<String, Object> prayerNotifPreferenceMap;
 	private Location newLocation;
 	private ViewPager mPager;
@@ -110,6 +117,9 @@ public class PrayerTimeFragment extends AbstractPrayerFragment {
 	private int numViewPagerPages = 1;
 	private ProgressBar progressBar;
 	private RecyclerView mRecyclerView;
+	private LinearLayout progressbarLayout;
+	private AsyncPrayerTimeService prayertimeService;
+	private Location location;
 
 	public static PrayerTimeFragment getInstance() {
 		return fragment;
@@ -121,6 +131,8 @@ public class PrayerTimeFragment extends AbstractPrayerFragment {
 		gson = new Gson();
 		fragment = this;
 		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+		prayertimeService = AsyncPrayerTimeService.getInstance(getContext());
+		location = prayertimeService.getCurrentLocation();
 		populateTuningValue();
 		setHasOptionsMenu(true);
 	}
@@ -133,48 +145,61 @@ public class PrayerTimeFragment extends AbstractPrayerFragment {
         stopAlarmSound();
 		closeNotification();
 		progressBar = (ProgressBar) rootView.findViewById(R.id.prayertime_progressbar);
+		progressbarLayout = (LinearLayout) rootView.findViewById(R.id.prayertime_progressbar_layout);
 
 		initViewPager(rootView);
-        
         setActionButtonListener(rootView);
 
-		String prayerJson = sharedPrefs.getString(Prayer.class.getName(), gson.toJson(new Prayer()));
-		prayer = gson.fromJson(prayerJson, Prayer.class);
-		
-		//populate location information
-		setLocationInformation(rootView);
-		
-		//populate prayer info
-		populatePrayerInfo(prayer);
-		
-		//populate prayer times
-		initPrayerItems();
-		populatePrayerItemList(rootView);
-		
+		setupPrayerTimes(location);
 		changeViewPagerAutomatically();
-		
-		sendRequestToCalculatePrayerTime(newLocation);
 		
 		((MainActivity)getActivity()).setActivityTitle(getActivity().getResources().getString(R.string.title_prayer_time));
 		
-		newLocation = null;
-
-		showProgress();
 		return rootView;
     }
 
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		setLocationInformation(location);
+	}
+
+	private void setupPrayerTimes(Location location) {
+		if (location != null) {
+			double lat = location.getLatitude();
+			double lng = location.getLongitude();
+			int timezone = location.getTimezone();
+			showProgress();
+			prayertimeService.getPrayertimes(lat, lng, timezone, new CallbackListener() {
+				@Override
+				public void afterProcess(Object result) {
+					List<PrayerTime> prayerTimes = (List<PrayerTime>) result;
+					if (prayerTimes != null) {
+						initPrayerItems(prayerTimes);
+						populatePrayerItemList(getView());
+						hideProgress();
+					}
+				}
+			});
+		}
+
+
+	}
+
 	private void showProgress() {
 		progressBar.setVisibility(View.VISIBLE);
-		mRecyclerView.setVisibility(View.GONE);
+		if (mRecyclerView != null) {
+			mRecyclerView.setVisibility(View.GONE);
+		}
+		progressbarLayout.setVisibility(View.VISIBLE);
 	}
 
 	private void hideProgress() {
 		progressBar.setVisibility(View.GONE);
 		mRecyclerView.setVisibility(View.VISIBLE);
+		progressbarLayout.setVisibility(View.GONE);
 	}
 	
 	private void initViewPager(View rootView) {
-		// Instantiate a ViewPager and a PagerAdapter.
 		mPager = (ViewPager) rootView.findViewById(R.id.pager);
 		mPagerAdapter = new ScreenSlidePagerAdapter(getChildFragmentManager());
 		mPager.setAdapter(mPagerAdapter);
@@ -196,60 +221,48 @@ public class PrayerTimeFragment extends AbstractPrayerFragment {
         Timer swipeTimer = new Timer();
         swipeTimer.schedule(new TimerTask() {
 
-            @Override
-            public void run() {
-                handler.post(Update);
-            }
-        }, 10000, 10000);
+			@Override
+			public void run() {
+				handler.post(Update);
+			}
+		}, 10000, 10000);
 	}
 	
 	private void setActionButtonListener(final View rootView) {
 		rootView.findViewById(R.id.btn_mosque_finder).setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View view) {
 				((FloatingActionsMenu) rootView.findViewById(R.id.prayertime_floatingactionmenu)).collapseImmediately();
 				MosqueFinderFragment mosqueFinderFragment = new MosqueFinderFragment();
 				mosqueFinderFragment.setTargetFragment(PrayerTimeFragment.this, REQUEST_CODE_MOSQUE_FINDER_PAGE);
-				 fragment.getFragmentManager().beginTransaction()
-	                .replace(R.id.container, mosqueFinderFragment).addToBackStack(null)
-	                .commit();
-				
+				fragment.getFragmentManager().beginTransaction()
+						.replace(R.id.container, mosqueFinderFragment).addToBackStack(null)
+						.commit();
+
 			}
 		});
 		
 		rootView.findViewById(R.id.btn_compass).setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View view) {
 				((FloatingActionsMenu) rootView.findViewById(R.id.prayertime_floatingactionmenu)).collapseImmediately();
 				CompassFragment compassFragment = new CompassFragment();
 				compassFragment.setTargetFragment(PrayerTimeFragment.this, REQUEST_CODE_COMPASS_PAGE);
-				 fragment.getFragmentManager().beginTransaction()
-	                .replace(R.id.container, compassFragment).addToBackStack(null)
-	                .commit();
-				
+				fragment.getFragmentManager().beginTransaction()
+						.replace(R.id.container, compassFragment).addToBackStack(null)
+						.commit();
+
 			}
 		});
 	}
 	
-	private void sendRequestToCalculatePrayerTime(Location newLocation) {
-		Intent service = new Intent(getContext(), PrayerTimeService.class);
-		service.putExtra(ACTION, ACTION_GET_PRAYER_TIME);
-		if (newLocation != null) {
-			service.putExtra(Location.class.getName(), gson.toJson(newLocation));
-		}
-		getContext().startService(service);
-	}
-	
-	
-	private void initPrayerItems() {
+	private void initPrayerItems(List<PrayerTime> prayerTimes) {
 		populatePrayerNotificationPrefMap();
-		prayerItems = new ArrayList<PrayerItemWrapper>();
-		if (prayer != null && prayer.getPrayerTimes() != null) {
-			for (PrayerTime prayerTime : prayer.getPrayerTimes()) {
-				prayerItems.add(new PrayerItemWrapper(prayerTime, prayerNotifPreferenceMap));
-			}
+		prayerItems = new ArrayList<>();
+		for (PrayerTime prayerTime : prayerTimes) {
+			prayerItems.add(new PrayerItemWrapper(prayerTime, prayerNotifPreferenceMap));
 		}
 	}
 	
@@ -325,7 +338,7 @@ public class PrayerTimeFragment extends AbstractPrayerFragment {
 	    Locale.setDefault(locale);
 	    Configuration config = new Configuration();
 	    config.locale = locale;
-	    getContext().getResources().updateConfiguration(config,getContext().getResources().getDisplayMetrics());
+	    getContext().getResources().updateConfiguration(config, getContext().getResources().getDisplayMetrics());
 	}
 	
 	@Override
@@ -334,15 +347,16 @@ public class PrayerTimeFragment extends AbstractPrayerFragment {
 		
 		switch (requestCode) {
 		case APP_SETTING_ID:
-			sendRequestToCalculatePrayerTime(newLocation);
+			setupPrayerTimes(location);
 			break;
 		case NOTIFICATION_SETTING_ID:
 			setNotificationSetting();
-			sendRequestToCalculatePrayerTime(newLocation);
+			setupPrayerTimes(location);
 			break;
 		case LOCATION_SETTING_ID:
 			String locationJson = data.getStringExtra(Location.class.getName());
-			newLocation = gson.fromJson(locationJson, Location.class);
+			location = gson.fromJson(locationJson, Location.class);
+			prayertimeService.save(location);
 			break;
 		}
 	}
@@ -407,19 +421,6 @@ public class PrayerTimeFragment extends AbstractPrayerFragment {
 	
 	
 	
-    public void renderPrayerValue(Prayer prayer) {
-		hideProgress();
-		if (getView() != null) {
-			this.prayer = prayer; 
-			setLocationInformation(getView());
-			if (prayer.getPrayerTimes() != null) {
-				initPrayerItems();
-				populatePrayerItemList(getView());
-				populatePrayerInfo(prayer);
-			}
-		}
-	}
-    
     private void populatePrayerInfo(Prayer prayer) {
     	String nextPrayerName = prayer.getNextPrayer() != null ? prayer.getNextPrayer().getPrayName() : "";
 		String nextPrayerTime = prayer.getNextPrayer() != null ? prayer.getNextPrayer().getPrayTime() : "";
@@ -434,17 +435,22 @@ public class PrayerTimeFragment extends AbstractPrayerFragment {
 		}
     }
     
-    private void setLocationInformation(View rootView) {
-    	String locationName = prayer.getLocation().getCity()+", "+prayer.getLocation().getCountry();
-    	LocationInfoFragment page = (LocationInfoFragment) mPagerAdapter.getFragment(0);
-		if (page == null) {
-			mPagerAdapter.setLocationName(locationName);
-		} else {
-			page.updateLocation(locationName);
+    private void setLocationInformation(Location location) {
+		if (location != null) {
+			String locationName = location.getCity()+", "+location.getCountry();
+			LocationInfoFragment page = (LocationInfoFragment) mPagerAdapter.getFragment(0);
+			if (page == null) {
+				mPagerAdapter.setLocationName(locationName);
+			} else {
+				page.updateLocation(locationName);
+			}
+
+			Intent broadcastIntent = new Intent(LocationInfoFragment.ACTION_UPDATE_LOCATION);
+			broadcastIntent.putExtra(LocationInfoFragment.LOCATION_NAME, locationName);
+			getContext().sendBroadcast(broadcastIntent);
 		}
-    	//((TextView) rootView.findViewById(R.id.location_address)).setText(prayer.getLocation().getCity()+", "+prayer.getLocation().getCountry());
     }
-    
+
     public void updateRemainingTime(String value) {
     	if (getView() != null) {
     		PrayerInfoFragment page = (PrayerInfoFragment) mPagerAdapter.getFragment(1);
@@ -478,4 +484,27 @@ public class PrayerTimeFragment extends AbstractPrayerFragment {
 
     	return super.onOptionsItemSelected(item);
     }
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		getContext().registerReceiver(onLocationUpdateReceiver, new IntentFilter(AsyncPrayerTimeService.ACTION_LOCATION_UPDATED));
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		getContext().unregisterReceiver(onLocationUpdateReceiver);
+	}
+
+	private BroadcastReceiver onLocationUpdateReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Location location = prayertimeService.getCurrentLocation();
+			setupPrayerTimes(location);
+			setLocationInformation(location);
+		}
+	};
+
+
 }

@@ -19,11 +19,20 @@
             android:layout_weight="25"/>
 
         <!-- Prayer Item -->
-
-        <ProgressBar
-            android:id="@+id/prayertime_progressbar"
+        <LinearLayout
+            android:id="@+id/prayertime_progressbar_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="0dp"
+            android:layout_weight="75"
+            android:padding="5dp"
+            android:layout_gravity="center"
+            android:gravity="center">
+            <ProgressBar
+                android:id="@+id/prayertime_progressbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/prayer_item_rv"

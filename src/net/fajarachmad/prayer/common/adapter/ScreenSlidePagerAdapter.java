@@ -23,8 +23,8 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter{
 	private String locationName;
 	
 	@SuppressLint("UseSparseArrays")
-	private Map<Integer, Fragment> fragmentMap = new HashMap<Integer, Fragment>();
-	
+	private Map<Integer, Fragment> fragmentMap = new HashMap<>();
+
 	public ScreenSlidePagerAdapter(FragmentManager fm) {
 		super(fm);
 	}
@@ -99,7 +99,8 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter{
     public Fragment getFragment(int position){
     	return fragmentMap.get(position);
     }
-    
+
+
 	public void setNextPrayerName(String nextPrayerName) {
 		this.nextPrayerName = nextPrayerName;
 	}

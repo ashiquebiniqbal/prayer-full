@@ -20,7 +20,6 @@ public class PrayerTimeReceiver extends BroadcastReceiver implements AppConstant
 		
 		switch (action) {
 		case ACTION_PRAYER_TIME_CHANGED:
-			onPrayerTimeChanged(intent);
 			break;
 		case ACTION_REMAINING_TIME_CHANGED:
 			onRemainingTimeChanged(intent);
@@ -40,15 +39,5 @@ public class PrayerTimeReceiver extends BroadcastReceiver implements AppConstant
 		}
 	}
 	
-	private void onPrayerTimeChanged(Intent intent) {
-		String prayerString = intent.getStringExtra(Prayer.class.getName());
-		if (prayerString != null) {
-			Gson gson = new Gson();
-			Prayer prayer = gson.fromJson(prayerString, Prayer.class);
-			if (PrayerTimeFragment.getInstance() != null) {
-				PrayerTimeFragment.getInstance().renderPrayerValue(prayer);
-			}
-		}
-	}
 
 }
