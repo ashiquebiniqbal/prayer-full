@@ -102,4 +102,6 @@
     <string name="sort">Sort</string>
     <string name="sort_by_name">Sort by name</string>
     <string name="sort_by_startdate">Sort by start date</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="dailydoa">Daily Doa</string>
 </resources>

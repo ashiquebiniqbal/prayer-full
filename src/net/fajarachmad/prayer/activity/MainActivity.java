@@ -1,20 +1,7 @@
 package net.fajarachmad.prayer.activity;
 
 
-import static net.fajarachmad.prayer.common.constant.AppConstant.*;
-
-import net.fajarachmad.prayer.R;
-import net.fajarachmad.prayer.common.adapter.LocationAdapter;
-import net.fajarachmad.prayer.common.util.AsyncGeocoderUtil;
-import net.fajarachmad.prayer.evaluation.fragment.EvaluationFragment;
-import net.fajarachmad.prayer.prayertime.fragment.PrayerTimeFragment;
-import net.fajarachmad.prayer.prayertime.service.AsyncPrayerTimeService;
-import net.fajarachmad.prayer.prayertime.service.PrayerTimeService;
-import net.fajarachmad.prayer.prayertime.wrapper.Location;
-
-import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,23 +20,32 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.IOException;
+import net.fajarachmad.prayer.R;
+import net.fajarachmad.prayer.common.adapter.LocationAdapter;
+import net.fajarachmad.prayer.dailydoa.fragment.DailydoaFragment;
+import net.fajarachmad.prayer.dashboard.fragment.DashboardFragment;
+import net.fajarachmad.prayer.evaluation.fragment.EvaluationFragment;
+import net.fajarachmad.prayer.prayertime.fragment.PrayerTimeFragment;
+import net.fajarachmad.prayer.prayertime.service.AsyncPrayerTimeService;
+import net.fajarachmad.prayer.prayertime.service.PrayerTimeService;
+import net.fajarachmad.prayer.prayertime.wrapper.Location;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+
+import static net.fajarachmad.prayer.common.constant.AppConstant.ACTION;
+import static net.fajarachmad.prayer.common.constant.AppConstant.ACTION_GET_PRAYER_TIME;
+import static net.fajarachmad.prayer.common.constant.AppConstant.APP_SETTING_ID;
+import static net.fajarachmad.prayer.common.constant.AppConstant.PREF_AUTODETECT_LOCATION_KEY;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -108,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void attachDefaultFragment() {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, new PrayerTimeFragment())
+                .replace(R.id.container, new DashboardFragment())
                 .commit();
     }
 
@@ -235,19 +231,24 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             	// update the main content by replacing fragments
                 FragmentManager fragmentManager = getSupportFragmentManager();
-                Fragment fragment;
+                Fragment fragment = null;
                 switch (position) {
-        		case 1:
-        			fragment = new PrayerTimeFragment();
-        			mActivityTitle = getString(R.string.title_prayer_time);
-        			break;
-                case 2:
-                    fragment = new EvaluationFragment();
-                    mActivityTitle = getString(R.string.self_evaluation_title);
-                    break;
-        		default:
-        			fragment = new PrayerTimeFragment();
-        			break;
+                    case 0:
+                        fragment = new DashboardFragment();
+                        mActivityTitle = getString(R.string.dashboard);
+                        break;
+                    case 1:
+                        fragment = new PrayerTimeFragment();
+                        mActivityTitle = getString(R.string.title_prayer_time);
+                        break;
+                    case 2:
+                        fragment = new EvaluationFragment();
+                        mActivityTitle = getString(R.string.self_evaluation_title);
+                        break;
+                    case 3:
+                        fragment = new DailydoaFragment();
+                        mActivityTitle = getString(R.string.dailydoa);
+                        break;
         		}
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, fragment)
@@ -304,12 +305,7 @@ public class MainActivity extends AppCompatActivity {
     	switch (item.getItemId()) {
    	 
             case R.id.action_settings:
-            /*getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.container, new GlobalSettingFragment())
-                    .addToBackStack(null)
-                    .commit();*/
-                startActivityForResult(new Intent(this, SettingsActivity.class), 1000);
+                startActivity(new Intent(this, SettingsActivity.class));
             break;
  
         }

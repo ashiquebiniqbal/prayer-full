@@ -98,4 +98,6 @@
     <string name="sort">Urutkan</string>
     <string name="sort_by_name">Urutkan berdsarkan nama</string>
     <string name="sort_by_startdate">Urutkan berdasarkan tanggal mulai</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="dailydoa">Doa Harian</string>
 </resources>

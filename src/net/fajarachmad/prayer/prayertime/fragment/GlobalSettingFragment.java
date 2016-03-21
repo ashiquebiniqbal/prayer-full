@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 
 import net.fajarachmad.prayer.activity.MainActivity;
 import net.fajarachmad.prayer.R;
+import net.fajarachmad.prayer.activity.SettingsActivity;
 import net.fajarachmad.prayer.common.view.SliderPreference;
 
 import java.util.ArrayList;
@@ -40,10 +41,6 @@ public class GlobalSettingFragment extends PreferenceFragment {
         sharedPrefs =  PreferenceManager.getDefaultSharedPreferences(getActivity());
         fragment = this;
         addPreferencesFromResource(R.xml.setting_layout);
-        ((MainActivity)getActivity()).setActivityTitle(getActivity().getResources().getString(R.string.menu_settings));
-
-
-        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         List<String> values = new ArrayList<String>();
