@@ -31,7 +31,7 @@ import android.widget.ListView;
 
 import net.fajarachmad.prayer.R;
 import net.fajarachmad.prayer.common.adapter.LocationAdapter;
-import net.fajarachmad.prayer.dailydoa.fragment.DailydoaFragment;
+import net.fajarachmad.prayer.prayer.fragment.PrayerFragment;
 import net.fajarachmad.prayer.dashboard.fragment.DashboardFragment;
 import net.fajarachmad.prayer.evaluation.fragment.EvaluationFragment;
 import net.fajarachmad.prayer.prayertime.fragment.PrayerTimeFragment;
@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
                         mActivityTitle = getString(R.string.self_evaluation_title);
                         break;
                     case 3:
-                        fragment = new DailydoaFragment();
+                        fragment = new PrayerFragment();
                         mActivityTitle = getString(R.string.dailydoa);
                         break;
         		}
