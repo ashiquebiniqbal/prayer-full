@@ -1,10 +1,14 @@
 package net.fajarachmad.prayer.prayer.fragment;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -44,8 +48,27 @@ public class PrayerDetailItemFragment extends AbstractPrayerFragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.prayer_detail_item, container, false);
 
-        TextView content = (TextView)view.findViewById(R.id.prayer_detail_item_content);
-        content.setText(prayerItem.getContent());
+        WebView content = (WebView)view.findViewById(R.id.prayer_detail_item_content);
+        String fontPath = "fonts/_PDMS_Saleem_QuranFont.ttf";
+        Typeface tf = Typeface.createFromAsset(getContext().getAssets(), fontPath);
+       // content.setTypeface(tf);
+        //content.setText(Html.fromHtml(prayerItem.getContent()));
+
+        content.setWebViewClient(new WebViewClient(){
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
+        });
+
+        String head = "<head><style>@font-face {font-family: 'arial';src: url('file:///android_asset/fonts/_PDMS_Saleem_QuranFont.ttf');}body {font-family: 'verdana';}</style></head>";
+        String html = "<html>"+head
+                + "<body style=\"font-family: arial\">" + Html.fromHtml(prayerItem.getContent()).toString()
+                + "</body></html>";
+
+        content.loadDataWithBaseURL("", html, "text/html", "utf-8", "");
+
         return view;
     }
 }

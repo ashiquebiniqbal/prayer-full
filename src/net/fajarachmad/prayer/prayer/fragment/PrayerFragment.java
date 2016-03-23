@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import net.fajarachmad.prayer.R;
 import net.fajarachmad.prayer.common.fragment.AbstractPrayerFragment;
 import net.fajarachmad.prayer.prayer.adapter.PrayerItemAdapter;
+import net.fajarachmad.prayer.prayer.service.PrayerService;
 import net.fajarachmad.prayer.prayer.wrapper.Prayer;
 import net.fajarachmad.prayer.prayer.wrapper.PrayerItem;
 
@@ -25,10 +26,12 @@ public class PrayerFragment extends AbstractPrayerFragment{
     private RecyclerView mRecyclerView;
     private List<Prayer> prayerList;
     private PrayerItemAdapter prayerItemAdapter;
+    private PrayerService prayerService;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.prayerService = PrayerService.getInstance(getContext());
         setActivityTitle(R.string.dailydoa);
         showParentToolbar();
     }
@@ -37,6 +40,7 @@ public class PrayerFragment extends AbstractPrayerFragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.prayer, container, false);
+        showParentToolbar();
         initPrayerListItem(view);
         return view;
     }
@@ -50,8 +54,8 @@ public class PrayerFragment extends AbstractPrayerFragment{
     }
 
     private void populatePrayerData() {
-        prayerList = new ArrayList<>();
-        for (int i=0; i<=5; i++) {
+        prayerList = prayerService.getPrayers();
+        /*for (int i=0; i<=5; i++) {
             Prayer prayer = new Prayer();
             prayer.setTitle("Prayer " + i);
             prayer.setDescription("Description of prayer " + i);
@@ -60,6 +64,6 @@ public class PrayerFragment extends AbstractPrayerFragment{
             items.add(new PrayerItem("SubTitle","This is content of prayer "+i));
             prayer.setPrayerItems(items);
             prayerList.add(prayer);
-        }
+        }*/
     }
 }

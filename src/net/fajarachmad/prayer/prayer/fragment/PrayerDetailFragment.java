@@ -41,6 +41,7 @@ public class PrayerDetailFragment extends AbstractPrayerFragment {
         if (getArguments() != null) {
             prayer = gson.fromJson(getArguments().getString(Prayer.class.getName()), Prayer.class);
         }
+        hideParentToolbar();
     }
 
     @Nullable
@@ -48,6 +49,7 @@ public class PrayerDetailFragment extends AbstractPrayerFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.prayer_detail, container, false);
         initViewPager(view);
+        setCustomToolbar(view, prayer.getTitle());
         return view;
     }
 
