@@ -25,6 +25,13 @@ public class PrayerDetailItemFragment extends AbstractPrayerFragment{
 
     private PrayerItem prayerItem;
 
+    private final String htmlText = "<body><h1>Heading Text</h1><p>This tutorial " +
+            "explains how to display " +
+            "<strong>HTML </strong>text in android text view.&nbsp;</p>" +
+            "<img src=\"hughjackman.jpg\">" +
+            "<blockquote>Example from <a href=\"www.javatechig.com\">" +
+            "Javatechig.com<a></blockquote></body>";
+
     public static PrayerDetailItemFragment newInstance(PrayerItem prayerItem) {
         PrayerDetailItemFragment f = new PrayerDetailItemFragment();
         Bundle bundle = new Bundle();
@@ -48,13 +55,13 @@ public class PrayerDetailItemFragment extends AbstractPrayerFragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.prayer_detail_item, container, false);
 
-        WebView content = (WebView)view.findViewById(R.id.prayer_detail_item_content);
+        TextView content = (TextView)view.findViewById(R.id.prayer_detail_item_content);
         String fontPath = "fonts/_PDMS_Saleem_QuranFont.ttf";
         Typeface tf = Typeface.createFromAsset(getContext().getAssets(), fontPath);
-       // content.setTypeface(tf);
-        //content.setText(Html.fromHtml(prayerItem.getContent()));
+        content.setTypeface(tf);
+        content.setText(Html.fromHtml(Html.fromHtml(prayerItem.getContent()).toString()));
 
-        content.setWebViewClient(new WebViewClient(){
+       /* content.setWebViewClient(new WebViewClient(){
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);
@@ -67,7 +74,7 @@ public class PrayerDetailItemFragment extends AbstractPrayerFragment{
                 + "<body style=\"font-family: arial\">" + Html.fromHtml(prayerItem.getContent()).toString()
                 + "</body></html>";
 
-        content.loadDataWithBaseURL("", html, "text/html", "utf-8", "");
+        content.loadDataWithBaseURL("", html, "text/html", "utf-8", "");*/
 
         return view;
     }
